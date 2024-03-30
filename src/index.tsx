@@ -1,12 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import LandingPage from "./pages/LandingPage";
+import LandingPage from "./landingpage.tsx";
+import { ThemeProvider } from "@/components/theme-provider.tsx";
+import "./styles/index.css";
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
-root.render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <LandingPage />
+    <ThemeProvider>
+      <LandingPage />
+    </ThemeProvider>
   </React.StrictMode>
 );

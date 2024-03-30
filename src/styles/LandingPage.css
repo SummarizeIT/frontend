@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* *=========== Very Dark Blue theme =========== */
+@layer base {
+  :root {
+    --background: 200 0% 100%;
+    --foreground: 200 10% 3.9%;
+    --card: 200 0% 100%;
+    --card-foreground: 200 10% 3.9%;
+    --popover: 200 0% 100%;
+    --popover-foreground: 200 10% 3.9%;
+    --primary: 200 76.2% 36.3%;
+    --primary-foreground: 200 100% 97.3%;
+    --secondary: 200 4.8% 95.9%;
+    --secondary-foreground: 200 5.9% 10%;
+    --muted: 200 4.8% 95.9%;
+    --muted-foreground: 200 3.8% 46.1%;
+    --accent: 200 4.8% 95.9%;
+    --accent-foreground: 200 5.9% 10%;
+    --destructive: 200 84.2% 60.2%;
+    --destructive-foreground: 200 0% 98%;
+    --border: 200 5.9% 90%;
+    --input: 200 5.9% 90%;
+    --ring: 200 76.2% 36.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 200 14.3% 4.1%;
+    --foreground: 200 0% 95%;
+    --card: 200 9.8% 10%;
+    --card-foreground: 200 0% 95%;
+    --popover: 200 0% 9%;
+    --popover-foreground: 200 0% 95%;
+    --primary: 200 70.6% 45.3%;
+    --primary-foreground: 200 80.4% 10%;
+    --secondary: 200 3.7% 15.9%;
+    --secondary-foreground: 200 0% 98%;
+    --muted: 200 0% 15%;
+    --muted-foreground: 200 5% 64.9%;
+    --accent: 200 6.5% 15.1%;
+    --accent-foreground: 200 0% 98%;
+    --destructive: 200 62.8% 30.6%;
+    --destructive-foreground: 200 85.7% 97.3%;
+    --border: 200 3.7% 15.9%;
+    --input: 200 3.7% 15.9%;
+    --ring: 200 71.8% 29.2%;
+  }
+}
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

@@ -97,6 +97,8 @@ export default function SignUpPage() {
           >
             <Box sx={{ gap: 2, display: "flex", alignItems: "center" }}>
               <LogoIcon />
+              <Typography level="h4">SummarizeIT</Typography>
+            </Box>
             <ColorSchemeToggle />
           </Box>
           <Box

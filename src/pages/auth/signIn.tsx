@@ -15,6 +15,7 @@ import Stack from "@mui/joy/Stack";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
+import loginImg from "../../assets/loginimg.png";
 
 interface FormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement;
@@ -96,6 +97,7 @@ export default function SignInPage() {
           >
             <Box sx={{ gap: 2, display: "flex", alignItems: "center" }}>
               <LogoIcon />
+              <Typography level="h4">SummarizeIT</Typography>
             </Box>
             <ColorSchemeToggle />
           </Box>
@@ -128,7 +130,7 @@ export default function SignInPage() {
                   Sign in
                 </Typography>
                 <Typography level="body-sm">
-                  New to company?{" "}
+                  You don't have an account?{" "}
                   <Link href="./signUp" level="title-sm">
                     Sign up!
                   </Link>
@@ -186,16 +188,10 @@ export default function SignInPage() {
           </Box>
           <Box component="footer" sx={{ py: 3 }}>
             <Typography level="body-xs" textAlign="center">
-              <h3>
-                &copy; 2024 by{" "}
-                <a
-                  target="_blank"
-                  href="https://github.com/SummarizeIT"
-                  className="text-primary transition-all border-primary hover:border-b-2"
-                >
-                  SummerizeIT Team{" "}
-                </a>
-              </h3>
+              &copy; 2024 by{" "}
+              <Link href="https://github.com/SummarizeIT">
+                SummarizeIT Team
+              </Link>
             </Typography>
           </Box>
         </Box>
@@ -207,7 +203,7 @@ export default function SignInPage() {
           right: 0,
           top: 0,
           bottom: 0,
-          left: { xs: 0, md: "50vw" },
+          left: { xs: "100%", md: "50vw" },
           transition:
             "background-image var(--Transition-duration), left var(--Transition-duration) !important",
           transitionDelay: "calc(var(--Transition-duration) + 0.1s)",
@@ -215,11 +211,9 @@ export default function SignInPage() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)",
+          backgroundImage: `url(${loginImg})`,
           [theme.getColorSchemeSelector("dark")]: {
-            backgroundImage:
-              "url(https://images.unsplash.com/photo-1572072393749-3ca9c8ea0831?auto=format&w=1000&dpr=2)",
+            backgroundImage: `url(${loginImg})`,
           },
         })}
       />

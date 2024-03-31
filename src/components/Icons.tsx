@@ -13,7 +13,7 @@ export const LogoIcon = () => {
         stroke="none"
       >
         <path
-          fill="#2d81ac" // Apply the primary color fill here
+          fill="#185ea5" // Apply the primary color fill here
           d="M480 2119 c-68 -6 -99 -15 -157 -45 -125 -63 -237 -193 -285 -332
           l-23 -67 0 -605 0 -605 24 -65 c61 -172 197 -304 371 -362 64 -21 76 -21 765
           -21 695 1 700 1 765 23 173 58 286 166 363 348 l27 63 0 598 c0 359 -4 620
@@ -28,7 +28,7 @@ export const LogoIcon = () => {
           187 -61 224 19 20 48 21 63 2z"
         />
         <path
-          fill="#2d81ac" // Apply the primary color fill here as well
+          fill="#185ea5" // Apply the primary color fill here as well
           d="M1135 1426 c-49 -21 -70 -81 -69 -196 0 -112 17 -161 64 -185 65 -34
           129 12 149 105 38 176 -39 323 -144 276z"
         />

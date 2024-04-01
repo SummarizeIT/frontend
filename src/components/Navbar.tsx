@@ -16,6 +16,7 @@ import { buttonVariants } from "./ui/button";
 import { Menu } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
 import { LogoIcon } from "./Icons";
+import { Link } from "react-router-dom";
 
 interface RouteProps {
   href: string;
@@ -82,15 +83,14 @@ export const Navbar = () => {
                       {label}
                     </a>
                   ))}
-                  <a
-                    href="#"
-                    target="_blank"
-                    className={`w-[110px] border ${buttonVariants({
+                  <Link
+                    to="/signIn"
+                    className={`border ${buttonVariants({
                       variant: "secondary",
                     })}`}
                   >
                     Sign in
-                  </a>
+                  </Link>
                 </nav>
               </SheetContent>
             </Sheet>
@@ -112,14 +112,12 @@ export const Navbar = () => {
           </nav>
 
           <div className="hidden md:flex gap-2">
-            <a
-              href="#"
-              target="_blank"
+            <Link
+              to="/signIn"
               className={`border ${buttonVariants({ variant: "secondary" })}`}
             >
               Sign in
-            </a>
-
+            </Link>
             <ModeToggle />
           </div>
         </NavigationMenuList>

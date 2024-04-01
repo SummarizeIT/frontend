@@ -6,7 +6,7 @@ import { Hero } from "./components/Hero";
 import { Navbar } from "./components/Navbar";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { Sponsors } from "./components/Sponsors";
-import "./styles/landingpage.css";
+import "./styles/LandingPage.css";
 
 function Landingpage() {
   return (

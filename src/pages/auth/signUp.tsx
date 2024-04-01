@@ -16,11 +16,14 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
+import { Navigate, useNavigate } from "react-router-dom";
 
 interface FormElements extends HTMLFormControlsCollection {
+  firstName: HTMLInputElement;
+  lastName: HTMLInputElement;
   email: HTMLInputElement;
   password: HTMLInputElement;
-  persistent: HTMLInputElement;
+  confirmpassword: HTMLInputElement;
 }
 interface SignInFormElement extends HTMLFormElement {
   readonly elements: FormElements;
@@ -51,8 +54,12 @@ function ColorSchemeToggle(props: IconButtonProps) {
 }
 
 export default function SignUpPage() {
+  const [showPassword] = React.useState(false);
+  const [showConfirmPassword] = React.useState(false);
+  const navigate = useNavigate();
+
   return (
-    <CssVarsProvider defaultMode="dark" disableTransitionOnChange>
+    <CssVarsProvider defaultMode="system" disableTransitionOnChange>
       <CssBaseline />
       <GlobalStyles
         styles={{
@@ -144,16 +151,44 @@ export default function SignUpPage() {
                   event.preventDefault();
                   const formElements = event.currentTarget.elements;
                   const data = {
+                    firstName: formElements.firstName.value,
+                    lastName: formElements.lastName.value,
                     email: formElements.email.value,
                     password: formElements.password.value,
-                    persistent: formElements.persistent.checked,
+                    confirmpassword: formElements.confirmpassword.value,
                   };
+                  // This regular expression checks for:
+                  // At least one lowercase letter ((?=.*[a-z]))
+                  // At least one uppercase letter ((?=.*[A-Z]))
+                  // At least one digit ((?=.*\d))
+                  // At least one special character ((?=.*[@$!%*?&]))
+                  // A minimum length of 8 characters ([A-Za-z\d@$!%*?&]{8,})
+                  const passwordRegex =
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                  if (!passwordRegex.test(data.password)) {
+                    alert(
+                      "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character."
+                    );
+                    return;
+                  }
+
+                  if (data.password !== data.confirmpassword) {
+                    alert("Passwords do not match.");
+                    return;
+                  }
+
                   alert(JSON.stringify(data, null, 2));
+                  navigate("/signin");
+
                 }}
               >
                 <FormControl required>
-                  <FormLabel>Full Name</FormLabel>
-                  <Input type="text" name="name" />
+                  <FormLabel>First name</FormLabel>
+                  <Input type="text" name="firstName" />
+                </FormControl>
+                <FormControl required>
+                  <FormLabel>Last name</FormLabel>
+                  <Input type="text" name="lastName" />
                 </FormControl>
                 <FormControl required>
                   <FormLabel>Email</FormLabel>
@@ -161,11 +196,11 @@ export default function SignUpPage() {
                 </FormControl>
                 <FormControl required>
                   <FormLabel>Password</FormLabel>
-                  <Input type="password" name="password" />
+                    <Input type={showPassword ? "text" : "password"} name="password"/>
                 </FormControl>
                 <FormControl required>
                   <FormLabel>Confirm your password</FormLabel>
-                  <Input type="password" name="confirmpassword" />
+                  <Input type={showConfirmPassword ? "text" : "password"} name="confirmpassword" />
                 </FormControl>
                 <Stack gap={4} sx={{ mt: 2 }}>
                   <Box

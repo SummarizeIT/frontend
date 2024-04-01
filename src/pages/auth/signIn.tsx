@@ -16,6 +16,7 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
+import { Link as RouterLink } from "react-router-dom";
 
 interface FormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement;
@@ -131,9 +132,12 @@ export default function SignInPage() {
                 </Typography>
                 <Typography level="body-sm">
                   You don't have an account?{" "}
-                  <Link href="./signUp" level="title-sm">
+                  <RouterLink
+                    to="/signUp"
+                    style={{ textDecoration: 'underline', color: '#1976d2', cursor: 'pointer' }}
+                  >
                     Sign up!
-                  </Link>
+                  </RouterLink>
                 </Typography>
               </Stack>
             </Stack>

@@ -1,10 +1,9 @@
-import * as React from 'react';
-import GlobalStyles from '@mui/joy/GlobalStyles';
-import Sheet from '@mui/joy/Sheet';
-import IconButton from '@mui/joy/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import GlobalStyles from '@mui/joy/GlobalStyles';
+import IconButton from '@mui/joy/IconButton';
+import Sheet from '@mui/joy/Sheet';
 
-import { toggleSidebar } from '../../layouts/utils';
+import { toggleSidebar } from '@/lib/DashboardUtils';
 
 export default function Header() {
   return (

@@ -1,19 +1,11 @@
-import { CssVarsProvider } from '@mui/joy/styles';
-import CssBaseline from '@mui/joy/CssBaseline';
 import Box from '@mui/joy/Box';
-import Button from '@mui/joy/Button';
-import Breadcrumbs from '@mui/joy/Breadcrumbs';
-import Link from '@mui/joy/Link';
+import CssBaseline from '@mui/joy/CssBaseline';
 import Typography from '@mui/joy/Typography';
+import { CssVarsProvider } from '@mui/joy/styles';
 
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 
-import Sidebar from '../components/dashboard/Sidebar';
-import OrderTable from '../components/dashboard/OrderTable';
-import OrderList from '../components/dashboard/OrderList';
-import Header from '../components/dashboard/Header';
+import Header from '@/components/dashboard/Header';
+import Sidebar from '@/components/dashboard/Sidebar';
 
 export default function JoyOrderDashboardTemplate() {
   return (
@@ -42,34 +34,9 @@ export default function JoyOrderDashboardTemplate() {
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Breadcrumbs
-              size="sm"
-              aria-label="breadcrumbs"
-              separator={<ChevronRightRoundedIcon  />}
-              sx={{ pl: 0 }}
-            >
-              <Link
-                underline="none"
-                color="neutral"
-                href="#some-link"
-                aria-label="Home"
-              >
-                <HomeRoundedIcon />
-              </Link>
-              <Link
-                underline="hover"
-                color="neutral"
-                href="#some-link"
-                fontSize={12}
-                fontWeight={500}
-              >
-                Dashboard
-              </Link>
-              <Typography color="primary" fontWeight={500} fontSize={12}>
-                Orders
-              </Typography>
-            </Breadcrumbs>
+              {/* Here we should call the path of the the current page... */}
           </Box>
+              {/** here the title of the page will be called */}
           <Box
             sx={{
               display: 'flex',
@@ -82,18 +49,11 @@ export default function JoyOrderDashboardTemplate() {
             }}
           >
             <Typography level="h2" component="h1">
-              Orders
+              Title
             </Typography>
-            <Button
-              color="primary"
-              startDecorator={<DownloadRoundedIcon />}
-              size="sm"
-            >
-              Download PDF
-            </Button>
           </Box>
-          <OrderTable />
-          <OrderList />
+
+          {/* components for getting the tables and data...etc */}
         </Box>
       </Box>
     </CssVarsProvider>

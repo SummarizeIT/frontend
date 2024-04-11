@@ -1,6 +1,6 @@
 import axios from "axios";
 
-interface RegisterData {
+export interface RegisterData {
   email: string;
   password: string;
   passwordConfirm: string;
@@ -8,15 +8,15 @@ interface RegisterData {
   lastName: string;
 }
 
-// interface LoginData {
-//   email: string;
-//   password: string;
-//   rememberMe: boolean;
-// }
+interface LoginData {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+}
 
-// interface ResetPasswordData {
-//   email: string;
-// }
+interface ResetPasswordData {
+  email: string;
+}
 class AuthManager {
   private static baseUrl: string='http://104.248.45.73:8080';
 
@@ -27,25 +27,25 @@ class AuthManager {
     return axios.post(url, registerData);
   }
 
-  // public async login(loginData: LoginData): Promise<any> {
-  //   const url = `${this.baseUrl}/auth/login`;
-  //   return axios.post(url, loginData);
-  // }
+  static async login(loginData: LoginData): Promise<any> {
+    const url = `${this.baseUrl}/auth/login`;
+    return axios.post(url, loginData);
+  }
 
-  // public async logout(): Promise<any> {
-  //   const url = `${this.baseUrl}/auth/logout`;
-  //   return axios.get(url);
-  // }
+  static async logout(): Promise<any> {
+    const url = `${this.baseUrl}/auth/logout`;
+    return axios.get(url);
+  }
 
-  // public async refresh(): Promise<any> {
-  //   const url = `${this.baseUrl}/auth/refresh`;
-  //   return axios.get(url);
-  // }
+  static async refresh(): Promise<any> {
+    const url = `${this.baseUrl}/auth/refresh`;
+    return axios.get(url);
+  }
 
-  // public async resetPassword(resetData: ResetPasswordData): Promise<any> {
-  //   const url = `${this.baseUrl}/auth/reset-password`;
-  //   return axios.post(url, resetData);
-  // }
+  static async resetPassword(resetData: ResetPasswordData): Promise<any> {
+    const url = `${this.baseUrl}/auth/reset-password`;
+    return axios.post(url, resetData);
+  }
 }
 
 export default AuthManager;

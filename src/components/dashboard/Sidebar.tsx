@@ -22,6 +22,8 @@ import * as React from 'react';
 import { LogoIcon } from "@/components/Icons";
 import { closeSidebar } from '@/lib/DashboardUtils';
 import ColorSchemeToggle from './ColorSchemeToggle';
+import { useNavigate } from "react-router-dom";
+
 
 function Toggler({
   defaultExpanded = false,
@@ -56,6 +58,7 @@ function Toggler({
 }
 
 export default function Sidebar() {
+  const navigate = useNavigate();
   return (
     <Sheet
       className="Sidebar"
@@ -142,7 +145,9 @@ export default function Sidebar() {
             <ListItemButton>
               <HomeRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">Quick Access</Typography>
+                <Typography level="title-sm"
+                  onClick={() => navigate('/QuickAccess')}
+                >Quick Access</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -151,7 +156,9 @@ export default function Sidebar() {
             <ListItemButton>
               <DashboardRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">Media</Typography>
+                <Typography level="title-sm"
+                  onClick={() => navigate('/Media')}
+                >Media</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
@@ -172,19 +179,19 @@ export default function Sidebar() {
             >
               <List sx={{ gap: 0.5 }}>
                 <ListItem sx={{ mt: 0.5 }}>
-                  <ListItemButton>Profile</ListItemButton>
+                  <ListItemButton onClick={() => navigate('/settings/profile')}>Profile</ListItemButton>
                 </ListItem>
                 <ListItem>
-                  <ListItemButton>Options</ListItemButton>
+                  <ListItemButton onClick={() => navigate('/settings/notifications')}>Notifications</ListItemButton>
                 </ListItem>
               </List>
             </Toggler>
           </ListItem>
 
-          
+
         </List>
 
-        <Card
+        {/* <Card
           invertedColors
           variant="soft"
           color="neutral"
@@ -200,7 +207,9 @@ export default function Sidebar() {
           <Button size="sm" variant="solid">
             Click Here
           </Button>
-        </Card>
+        </Card> */}
+        <Divider />
+        {/* call organization selection */}
       </Box>
 
       <Divider />
@@ -215,7 +224,9 @@ export default function Sidebar() {
           <Typography level="body-xs">User Email</Typography>
         </Box>
         <IconButton size="sm" variant="plain" color="neutral">
-          <LogoutRoundedIcon />
+          <LogoutRoundedIcon
+            onClick={() => navigate('/')}
+          />
         </IconButton>
       </Box>
     </Sheet>

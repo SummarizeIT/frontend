@@ -34,9 +34,9 @@ export default function JoyOrderDashboardTemplate() {
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {/* Here we should call the path of the the current page... */}
+            {/* Here we should call the path of the the current page... */}
           </Box>
-              {/** here the title of the page will be called */}
+          {/** here the title of the page will be called */}
           <Box
             sx={{
               display: 'flex',

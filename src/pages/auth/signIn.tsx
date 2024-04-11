@@ -17,11 +17,15 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { Link as RouterLink } from "react-router-dom";
+import AuthManager, { LoginData } from "@/utils/auth";
+import Checkbox from "@mui/joy/Checkbox";
+import { useNavigate } from "react-router-dom";
+
 
 interface FormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement;
   password: HTMLInputElement;
-  persistent: HTMLInputElement;
+  rememberMe: HTMLInputElement;
 }
 interface SignInFormElement extends HTMLFormElement {
   readonly elements: FormElements;
@@ -52,6 +56,7 @@ function ColorSchemeToggle(props: IconButtonProps) {
 }
 
 export default function SignInPage() {
+  const navigate = useNavigate();
   return (
     <CssVarsProvider defaultMode="dark" disableTransitionOnChange>
       <CssBaseline />
@@ -152,15 +157,24 @@ export default function SignInPage() {
             </Divider>
             <Stack gap={4} sx={{ mt: 2 }}>
               <form
-                onSubmit={(event: React.FormEvent<SignInFormElement>) => {
+                onSubmit={async (event: React.FormEvent<SignInFormElement>) => {
                   event.preventDefault();
                   const formElements = event.currentTarget.elements;
-                  const data = {
+                  const loginData: LoginData = {
                     email: formElements.email.value,
                     password: formElements.password.value,
-                    persistent: formElements.persistent.checked,
+                    rememberMe: formElements.rememberMe.checked,
                   };
-                  alert(JSON.stringify(data, null, 2));
+                  alert(JSON.stringify(loginData, null, 2));
+                  try {
+                    const response = await AuthManager.login(loginData);
+                    // Handle response or navigate to different page on success
+                    alert(JSON.stringify(response.data, null, 2));
+                    navigate("/Dashboard");
+                  } catch (error) {
+                    // Handle error, e.g., display an error message
+                    console.error("Registration error:", error);
+                  }
                 }}
               >
                 <FormControl required>
@@ -170,6 +184,9 @@ export default function SignInPage() {
                 <FormControl required>
                   <FormLabel>Password</FormLabel>
                   <Input type="password" name="password" />
+                </FormControl>
+                <FormControl>
+                  <Checkbox size="sm" label="Remember me" name="rememberMe" />
                 </FormControl>
                 <Stack gap={4} sx={{ mt: 2 }}>
                   <Box

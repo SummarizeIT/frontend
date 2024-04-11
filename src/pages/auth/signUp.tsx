@@ -16,12 +16,8 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
-<<<<<<< Updated upstream
-import { Navigate, useNavigate } from "react-router-dom";
-=======
 import { useNavigate } from "react-router-dom";
 import AuthManager, { RegisterData } from "@/utils/auth";
->>>>>>> Stashed changes
 
 interface FormElements extends HTMLFormControlsCollection {
   firstName: HTMLInputElement;

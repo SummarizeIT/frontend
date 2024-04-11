@@ -179,9 +179,11 @@ export default function SignInPage() {
                       alignItems: "center",
                     }}
                   >
-                    <Link level="title-sm" href="#replace-with-a-link">
-                      Forgot your password?
-                    </Link>
+                    <RouterLink
+                    to="/sendEmail"
+                    style={{ color: '#1976d2', cursor: 'pointer' }}>
+                    Forgot Password
+                  </RouterLink>
                   </Box>
                   <Button type="submit" fullWidth>
                     Sign in
@@ -201,7 +203,7 @@ export default function SignInPage() {
         </Box>
       </Box>
       <Box
-        sx={(theme) => ({
+        sx={({
           height: "100%",
           position: "fixed",
           right: 0,
@@ -216,9 +218,7 @@ export default function SignInPage() {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundImage: `url(${loginImg})`,
-          [theme.getColorSchemeSelector("dark")]: {
-            backgroundImage: `url(${loginImg})`,
-          },
+         
         })}
       />
     </CssVarsProvider>

@@ -17,6 +17,7 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { useNavigate } from "react-router-dom";
+
 import AuthManager, { RegisterData } from "@/utils/auth";
 
 interface FormElements extends HTMLFormControlsCollection {

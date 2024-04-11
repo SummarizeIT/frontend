@@ -16,7 +16,12 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
+<<<<<<< Updated upstream
 import { Navigate, useNavigate } from "react-router-dom";
+=======
+import { useNavigate } from "react-router-dom";
+import AuthManager, { RegisterData } from "@/utils/auth";
+>>>>>>> Stashed changes
 
 interface FormElements extends HTMLFormControlsCollection {
   firstName: HTMLInputElement;
@@ -147,15 +152,15 @@ export default function SignUpPage() {
             ></Divider>
             <Stack gap={4} sx={{ mt: 2 }}>
               <form
-                onSubmit={(event: React.FormEvent<SignInFormElement>) => {
+                onSubmit={async (event: React.FormEvent<SignInFormElement>) => {
                   event.preventDefault();
                   const formElements = event.currentTarget.elements;
-                  const data = {
-                    firstName: formElements.firstName.value,
+                  const registerData: RegisterData = {
+                    name: formElements.firstName.value,
                     lastName: formElements.lastName.value,
                     email: formElements.email.value,
                     password: formElements.password.value,
-                    confirmpassword: formElements.confirmpassword.value,
+                    passwordConfirm: formElements.confirmpassword.value,
                   };
                   // This regular expression checks for:
                   // At least one lowercase letter ((?=.*[a-z]))
@@ -165,21 +170,28 @@ export default function SignUpPage() {
                   // A minimum length of 8 characters ([A-Za-z\d@$!%*?&]{8,})
                   const passwordRegex =
                     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-                  if (!passwordRegex.test(data.password)) {
+                  if (!passwordRegex.test(registerData.password)) {
                     alert(
                       "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character."
                     );
                     return;
                   }
 
-                  if (data.password !== data.confirmpassword) {
+                  if (registerData.password !== registerData.passwordConfirm) {
                     alert("Passwords do not match.");
                     return;
                   }
 
-                  alert(JSON.stringify(data, null, 2));
-                  navigate("/signin");
-
+                  alert(JSON.stringify(registerData, null, 2));
+                  try {
+                    const response = await AuthManager.register(registerData);
+                    // Handle response or navigate to different page on success
+                    alert(JSON.stringify(response.data, null, 2));
+                    navigate("/signin");
+                  } catch (error) {
+                    // Handle error, e.g., display an error message
+                    console.error("Registration error:", error);
+                  }
                 }}
               >
                 <FormControl required>
@@ -196,11 +208,17 @@ export default function SignUpPage() {
                 </FormControl>
                 <FormControl required>
                   <FormLabel>Password</FormLabel>
-                    <Input type={showPassword ? "text" : "password"} name="password"/>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                  />
                 </FormControl>
                 <FormControl required>
                   <FormLabel>Confirm your password</FormLabel>
-                  <Input type={showConfirmPassword ? "text" : "password"} name="confirmpassword" />
+                  <Input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmpassword"
+                  />
                 </FormControl>
                 <Stack gap={4} sx={{ mt: 2 }}>
                   <Box

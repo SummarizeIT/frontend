@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface RecommendationsProps {
+export interface RecommendationsProps {
   recommendationsList: string[];
   recommendationsURL: string[];
 }

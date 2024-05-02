@@ -1,8 +1,8 @@
-interface objectiveProps {
+export interface ObjectiveProps {
     objectiveList: string[];
 }
 
-const Objective: React.FC<objectiveProps> = ({ objectiveList }) => {
+const Objective: React.FC<ObjectiveProps> = ({ objectiveList }) => {
     return (
       <ul>
         {objectiveList.map((objective, index) => (

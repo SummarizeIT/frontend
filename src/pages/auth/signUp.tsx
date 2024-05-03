@@ -16,7 +16,7 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Link as RouterLink } from "react-router-dom";
 
 import AuthManager, { RegisterData } from "@/utils/auth";
 
@@ -133,10 +133,19 @@ export default function SignUpPage() {
               },
             }}
           >
-            <Stack gap={4} sx={{ mb: 2 }}>
+                        <Stack gap={4} sx={{ mb: 2 }}>
               <Stack gap={1}>
                 <Typography component="h1" level="h3">
-                  Register
+                  Sign Up
+                </Typography>
+                <Typography level="body-sm">
+                  You have an account?{" "}
+                  <RouterLink
+                    to="/signin"
+                    style={{ textDecoration: 'underline', color: '#1976d2', cursor: 'pointer' }}
+                  >
+                    Sign in!
+                  </RouterLink>
                 </Typography>
               </Stack>
             </Stack>
@@ -146,7 +155,9 @@ export default function SignUpPage() {
                   color: { xs: "#FFF", md: "text.tertiary" },
                 },
               })}
-            ></Divider>
+            >
+            </Divider>
+
             <Stack gap={4} sx={{ mt: 2 }}>
               <form
                 onSubmit={async (event: React.FormEvent<SignInFormElement>) => {
@@ -217,6 +228,7 @@ export default function SignUpPage() {
                     name="confirmpassword"
                   />
                 </FormControl>
+
                 <Stack gap={4} sx={{ mt: 2 }}>
                   <Box
                     sx={{

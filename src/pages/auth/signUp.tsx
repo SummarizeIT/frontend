@@ -18,7 +18,7 @@ import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { useNavigate ,Link as RouterLink } from "react-router-dom";
 
-import AuthManager, { RegisterData } from "@/utils/auth";
+import AuthManager, { RegisterData } from "@/utils/auth/Auth-register";
 
 interface FormElements extends HTMLFormControlsCollection {
   firstName: HTMLInputElement;
@@ -170,12 +170,6 @@ export default function SignUpPage() {
                     password: formElements.password.value,
                     passwordConfirm: formElements.confirmpassword.value,
                   };
-                  // This regular expression checks for:
-                  // At least one lowercase letter ((?=.*[a-z]))
-                  // At least one uppercase letter ((?=.*[A-Z]))
-                  // At least one digit ((?=.*\d))
-                  // At least one special character ((?=.*[@$!%*?&]))
-                  // A minimum length of 8 characters ([A-Za-z\d@$!%*?&]{8,})
                   const passwordRegex =
                     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
                   if (!passwordRegex.test(registerData.password)) {
@@ -190,14 +184,11 @@ export default function SignUpPage() {
                     return;
                   }
 
-                  alert(JSON.stringify(registerData, null, 2));
                   try {
                     const response = await AuthManager.register(registerData);
-                    // Handle response or navigate to different page on success
-                    alert(JSON.stringify(response.data, null, 2));
+                    alert(response.message);
                     navigate("/signin");
                   } catch (error) {
-                    // Handle error, e.g., display an error message
                     console.error("Registration error:", error);
                   }
                 }}

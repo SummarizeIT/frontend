@@ -17,7 +17,7 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { Link as RouterLink } from "react-router-dom";
-import { useAuth } from "@/utils/auth-context"; 
+import { useAuth } from "@/utils/auth/auth-context"; 
 import Checkbox from "@mui/joy/Checkbox";
 import { useNavigate } from "react-router-dom";
 

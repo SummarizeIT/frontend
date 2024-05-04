@@ -1,27 +1,28 @@
-import * as React from "react";
-import { CssVarsProvider, useColorScheme } from "@mui/joy/styles";
-import GlobalStyles from "@mui/joy/GlobalStyles";
-import CssBaseline from "@mui/joy/CssBaseline";
+import { useAuth } from "@/utils/auth/auth-context";
+import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
+import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
+import CssBaseline from "@mui/joy/CssBaseline";
 import Divider from "@mui/joy/Divider";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
+import GlobalStyles from "@mui/joy/GlobalStyles";
 import IconButton, { IconButtonProps } from "@mui/joy/IconButton";
-import Link from "@mui/joy/Link";
 import Input from "@mui/joy/Input";
-import Typography from "@mui/joy/Typography";
+import Link from "@mui/joy/Link";
 import Stack from "@mui/joy/Stack";
-import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
-import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
-import { LogoIcon } from "../../components/Icons";
+import Typography from "@mui/joy/Typography";
+import { CssVarsProvider, useColorScheme } from "@mui/joy/styles";
+import * as React from "react";
 import loginImg from "../../assets/loginimg.png";
-import { useNavigate } from "react-router-dom";
+import { LogoIcon } from "../../components/Icons";
 
 interface FormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement;
 }
-interface SignInFormElement extends HTMLFormElement {
+
+interface SendEmailFormElement extends HTMLFormElement {
   readonly elements: FormElements;
 }
 
@@ -50,7 +51,22 @@ function ColorSchemeToggle(props: IconButtonProps) {
 }
 
 export default function SendEmail() {
-  const navigate = useNavigate();
+  const auth = useAuth();
+
+  const handleSubmit = async (event: React.FormEvent<SendEmailFormElement>) => {
+    event.preventDefault();
+    const { email } = event.currentTarget.elements;
+    if (auth && email) {
+      try {
+        await auth.resetPassword({
+          email: email.value,
+        });
+        email.value = "";
+      } catch (error) {
+        console.error("Failed to send email:", error);
+      }
+    }
+  };
 
   return (
     <CssVarsProvider defaultMode="dark" disableTransitionOnChange>
@@ -133,15 +149,9 @@ export default function SendEmail() {
             </Stack>
             <Divider></Divider>
             <form
-              onSubmit={(event: React.FormEvent<SignInFormElement>) => {
-                event.preventDefault();
-                const formElements = event.currentTarget.elements;
-                const data = {
-                  email: formElements.email.value,
-                };
-                alert(JSON.stringify(data, null, 2));
-                navigate("/sendEmail/forgotPassword");
-              }}
+              noValidate
+              autoComplete="off"
+              onSubmit={(event) => handleSubmit(event as any)}
             >
               <FormControl required>
                 <FormLabel>Email</FormLabel>
@@ -157,9 +167,7 @@ export default function SendEmail() {
           <Box component="footer" sx={{ py: 3 }}>
             <Typography level="body-xs" textAlign="center">
               &copy; 2024 by{" "}
-              <Link href="https://github.com/SummarizeIT">
-                SummarizeIT Team
-              </Link>
+              <Link href="https://github.com/SummarizeIT">SummarizeIT Team</Link>
             </Typography>
           </Box>
         </Box>

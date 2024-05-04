@@ -3,19 +3,21 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   LoginData,
   LoginResponse,
-  ResetPasswordChangeData,
   ResetPasswordRequest,
   SimpleMessageResponse,
-  UserData
+  UserData,
+  ResetPasswordTokenCheckResponse,
+  ResetPasswordChangeRequest
 } from './AuthTypes';
 
 interface AuthContextType {
-    user: UserData | null;
-    isAuthenticated: boolean;
-    login: (data: LoginData) => Promise<void>;
-    logout: () => void;
-    resetPassword: (data: ResetPasswordRequest) => Promise<void>;
-    resetPasswordWithToken: (token: string, data: ResetPasswordChangeData) => Promise<void>;
+  user: UserData | null;
+  isAuthenticated: boolean;
+  login: (data: LoginData) => Promise<void>;
+  logout: () => void;
+  resetPassword: (data: ResetPasswordRequest) => Promise<void>;
+  validateResetToken: (token: string) => Promise<ResetPasswordTokenCheckResponse>;
+  changePasswordWithToken: (data: ResetPasswordChangeRequest) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -49,18 +51,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Login error:', error);
     }
   };
-
+  //Done
   const logout = (): void => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      axios.get<SimpleMessageResponse>('http://104.248.45.73:8080/auth/logout', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      })
+        .then(response => {
+          console.log(response.data.message);
+        })
+        .catch(error => {
+          console.error('Logout error:', error);
+        });
+    } else {
+      console.error('Logout error: No access token found');
+    }
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
     setUser(null);
-    axios.get<SimpleMessageResponse>('http://104.248.45.73:8080/auth/logout').then(response => {
-      console.log(response.data.message);
-    }).catch(error => {
-      console.error('Logout error:', error);
-    });
   };
-
+  //Done
   const resetPassword = async (data: ResetPasswordRequest): Promise<void> => {
     try {
       const response = await axios.post<SimpleMessageResponse>('http://104.248.45.73:8080/auth/reset-password', data);
@@ -71,15 +83,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const resetPasswordWithToken = async (token: string, data: ResetPasswordChangeData): Promise<void> => {
+  //TODO
+  const validateResetToken = async (token: string): Promise<ResetPasswordTokenCheckResponse> => {
     try {
-      const response = await axios.post<SimpleMessageResponse>(`http://104.248.45.73:8080/auth/reset-password/${token}`, data);
-      console.log(response.data.message);
+      const response = await axios.get<ResetPasswordTokenCheckResponse>(`http://104.248.45.73:8080/auth/reset-password/${token}`);
+      return response.data;
     } catch (error) {
-      console.error('Reset Password with Token error:', error);
+      console.error('Token validation error:', error);
+      throw error;
     }
   };
 
+  const changePasswordWithToken = async (data: ResetPasswordChangeRequest): Promise<void> => {
+    try {
+      const response = await axios.post<SimpleMessageResponse>(`http://104.248.45.73:8080/auth/reset-password/${data.token}`, {
+        password: data.password,
+        passwordConfirm: data.passwordConfirm
+      });
+      alert(response.data.message);
+    } catch (error) {
+      console.error('Password reset error:', error);
+      alert('Failed to reset password.');
+      throw error;
+    }
+  };
 
   //Done
   useEffect(() => {
@@ -100,11 +127,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
     refreshAuth();
-   
+
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, resetPassword, resetPasswordWithToken }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, resetPassword, validateResetToken, changePasswordWithToken }}>
       {children}
     </AuthContext.Provider>
   );

@@ -35,12 +35,6 @@ export interface ResetPasswordTokenCheckResponse {
   updatedAt: string;
 }
 
-export interface ResetPasswordChangeData {
-  password: string;
-  passwordConfirm: string;
-}
-
-
 interface Organization {
   id: string;
   name: string;
@@ -64,4 +58,17 @@ export interface UserData {
   avatar: string;
   organizations: Organization[];
   invites: Invite[];
+}
+
+export interface ResetPasswordTokenCheckResponse {
+  id: string;
+  token: string;
+  userId: string;
+  expirationDate: string;
+}
+
+export interface ResetPasswordChangeRequest {
+  password: string;
+  passwordConfirm: string;
+  token: string;
 }

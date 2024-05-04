@@ -25,6 +25,8 @@
     "@radix-ui/react-navigation-menu": "^1.1.4",
     "@radix-ui/react-slot": "^1.0.2",
     "axios": "^1.6.8",
+    "chonky": "^2.3.2",
+    "chonky-icon-fontawesome": "^2.3.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "lucide-react": "^0.294.0",
@@ -37,7 +39,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.10.2",
-    "@types/react": "^18.2.37",
+    "@types/react": "^18.3.1",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
@@ -48,7 +50,7 @@
     "eslint-plugin-react-refresh": "^0.4.4",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.5",
-    "typescript": "^5.2.2",
+    "typescript": "^5.4.5",
     "vite": "^5.2.8"
   }
 }

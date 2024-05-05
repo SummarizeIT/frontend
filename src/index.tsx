@@ -21,7 +21,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/*" element={<NotFoundPage />} />
             <Route path="/" element={<Landingpage />} />
             <Route path="/signin" element={<SignInPage />} />
-            <Route path="/signUp" element={<SignUpPage />} />
+            <Route path="/signUp" element={<SignUpPage />} />  
             <Route path="/Dashboard" element={<Dashboard />} />
             <Route path="/sendemail" element={<SendEmail />} />
           </Routes>

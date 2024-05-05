@@ -17,8 +17,8 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { useNavigate ,Link as RouterLink } from "react-router-dom";
-
-import AuthManager, { RegisterData } from "@/utils/auth/Auth-register";
+import { useAuth } from "@/utils/auth/auth-context";
+import { RegisterRequest} from '@/client';
 
 interface FormElements extends HTMLFormControlsCollection {
   firstName: HTMLInputElement;
@@ -27,7 +27,7 @@ interface FormElements extends HTMLFormControlsCollection {
   password: HTMLInputElement;
   confirmpassword: HTMLInputElement;
 }
-interface SignInFormElement extends HTMLFormElement {
+interface SignUnFormElement extends HTMLFormElement {
   readonly elements: FormElements;
 }
 
@@ -59,6 +59,38 @@ export default function SignUpPage() {
   const [showPassword] = React.useState(false);
   const [showConfirmPassword] = React.useState(false);
   const navigate = useNavigate();
+  const auth = useAuth();
+  
+  const handleregister = async (event: React.FormEvent<SignUnFormElement>) => {
+    event.preventDefault();
+    const formElements = event.currentTarget.elements;
+    const registerData: RegisterRequest = {
+      name: formElements.firstName.value,
+      lastName: formElements.lastName.value,
+      email: formElements.email.value,
+      password: formElements.password.value,
+      passwordConfirm: formElements.confirmpassword.value,
+    };
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(registerData.password)) {
+      alert(
+        "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character."
+      );
+      return;
+    }
+
+    if (registerData.password !== registerData.passwordConfirm) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    try {
+      await auth.register(registerData);
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
+  };
 
   return (
     <CssVarsProvider defaultMode="system" disableTransitionOnChange>
@@ -160,38 +192,7 @@ export default function SignUpPage() {
 
             <Stack gap={4} sx={{ mt: 2 }}>
               <form
-                onSubmit={async (event: React.FormEvent<SignInFormElement>) => {
-                  event.preventDefault();
-                  const formElements = event.currentTarget.elements;
-                  const registerData: RegisterData = {
-                    name: formElements.firstName.value,
-                    lastName: formElements.lastName.value,
-                    email: formElements.email.value,
-                    password: formElements.password.value,
-                    passwordConfirm: formElements.confirmpassword.value,
-                  };
-                  const passwordRegex =
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-                  if (!passwordRegex.test(registerData.password)) {
-                    alert(
-                      "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character."
-                    );
-                    return;
-                  }
-
-                  if (registerData.password !== registerData.passwordConfirm) {
-                    alert("Passwords do not match.");
-                    return;
-                  }
-
-                  try {
-                    const response = await AuthManager.register(registerData);
-                    alert(response.message);
-                    navigate("/signin");
-                  } catch (error) {
-                    console.error("Registration error:", error);
-                  }
-                }}
+                onSubmit={handleregister}
               >
                 <FormControl required>
                   <FormLabel>First name</FormLabel>

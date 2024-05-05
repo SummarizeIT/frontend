@@ -1,137 +1,108 @@
-import axios from 'axios';
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import {
-  LoginData,
-  LoginResponse,
-  ResetPasswordRequest,
-  SimpleMessageResponse,
-  UserData,
-  ResetPasswordTokenCheckResponse,
-  ResetPasswordChangeRequest
-} from './AuthTypes';
+import { LoginRequest, RegisterRequest, MeResponse, PasswordRequest, PasswordResetResponse, ResetPasswordRequest } from '@/client';
+import { OpenAPI } from '@/client/core/OpenAPI.ts';
+import { AccountService, AuthService } from '@/client/services.gen.ts';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+
+
+OpenAPI.BASE = 'http://localhost:8010/proxy';
 
 interface AuthContextType {
-  user: UserData | null;
+  user: MeResponse | null;
   isAuthenticated: boolean;
-  login: (data: LoginData) => Promise<void>;
+  login: (request: LoginRequest) => Promise<void>;
+  register: (request: RegisterRequest) => Promise<void>;
   logout: () => void;
-  resetPassword: (data: ResetPasswordRequest) => Promise<void>;
-  validateResetToken: (token: string) => Promise<ResetPasswordTokenCheckResponse>;
-  changePasswordWithToken: (data: ResetPasswordChangeRequest) => Promise<void>;
+  resetPassword: (request: PasswordRequest) => Promise<void>;
+  validateResetToken: (token: string) => Promise<PasswordResetResponse>;
+  changePasswordWithToken: (token: string, request: ResetPasswordRequest) => Promise<PasswordResetResponse>;
+  refreshAuth: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType>(null!);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUser] = useState<MeResponse | null>(null);
+  const navigate = useNavigate();
+
 
   //Done
   const fetchUserDetails = async () => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      try {
-        const response = await axios.get<UserData>('http://104.248.45.73:8080/account', {
-          headers: { Authorization: `Bearer ${accessToken}` }
-        });
-        setUser(response.data);
-        localStorage.setItem('user', JSON.stringify(response.data));
-      } catch (error) {
-        console.error('Failed to fetch user details:', error);
-      }
+    try {
+      setUser(await AccountService.me());
+    } catch (error) {
+      console.error('Failed to fetch user details:', error);
     }
   };
   //Done
-  const login = async (data: LoginData): Promise<void> => {
-    try {
-      const response = await axios.post<LoginResponse>('http://104.248.45.73:8080/auth/login', data);
-      localStorage.setItem('accessToken', response.data.token);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
-      await fetchUserDetails();
-    } catch (error) {
-      console.error('Login error:', error);
-    }
-  };
+  const login = async (request: LoginRequest): Promise<void> => {
+    await AuthService.login({ requestBody: request })
+      .then((response) => {
+        localStorage.setItem('accesstoken', response.token);
+        localStorage.setItem('refreshtoken', response.refreshToken);
+        OpenAPI.TOKEN = response.token;
+        fetchUserDetails();
+        navigate("/Dashboard");
+      }
+      ).catch(error => {
+        console.log(error)
+      })
+  }
+  //Done
+  const register = async (request: RegisterRequest): Promise<void> => {
+    await AuthService.register({ requestBody: request })
+      .then((response) => {
+        alert(response.message);
+        navigate("/signin");
+      }
+      ).catch(error => {
+        console.log(error)
+      })
+  }
   //Done
   const logout = (): void => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      axios.get<SimpleMessageResponse>('http://104.248.45.73:8080/auth/logout', {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      })
-        .then(response => {
-          console.log(response.data.message);
-        })
-        .catch(error => {
-          console.error('Logout error:', error);
-        });
-    } else {
-      console.error('Logout error: No access token found');
-    }
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
+    localStorage.removeItem('accesstoken');
+    localStorage.removeItem('refreshtoken');
     setUser(null);
+    AuthService.logout();
+    OpenAPI.TOKEN = undefined;
   };
   //Done
-  const resetPassword = async (data: ResetPasswordRequest): Promise<void> => {
-    try {
-      const response = await axios.post<SimpleMessageResponse>('http://104.248.45.73:8080/auth/reset-password', data);
-      alert(response.data.message);
-    } catch (error) {
-      console.error('Reset Password error:', error);
-      alert('Failed to reset password. Please check your email.');
-    }
+  const resetPassword = async (request: PasswordRequest): Promise<void> => {
+    await AuthService.resetPassword({ requestBody: request });
   };
-
   //TODO
-  const validateResetToken = async (token: string): Promise<ResetPasswordTokenCheckResponse> => {
-    try {
-      const response = await axios.get<ResetPasswordTokenCheckResponse>(`http://104.248.45.73:8080/auth/reset-password/${token}`);
-      return response.data;
-    } catch (error) {
-      console.error('Token validation error:', error);
-      throw error;
+  const validateResetToken = async (token: string): Promise<PasswordResetResponse> => {
+    return await AuthService.resetPassword2({ token });
+  };
+  //TODO
+  const changePasswordWithToken = async (token: string, request: ResetPasswordRequest): Promise<PasswordResetResponse> => {
+    return await AuthService.resetPassword1({ requestBody: request, token });
+  };
+  //Done
+  const refreshAuth = async () => {
+    const refresh = localStorage.getItem('refreshToken');
+    if (refresh) {
+      await AuthService.refresh({ refresh })
+        .then((response) => {
+          localStorage.setItem('Token', response.token);
+          localStorage.setItem('RefreshToken', response.refreshToken);
+          fetchUserDetails();
+        }).catch(error => console.log(error))
     }
   };
-
-  const changePasswordWithToken = async (data: ResetPasswordChangeRequest): Promise<void> => {
-    try {
-      const response = await axios.post<SimpleMessageResponse>(`http://104.248.45.73:8080/auth/reset-password/${data.token}`, {
-        password: data.password,
-        passwordConfirm: data.passwordConfirm
-      });
-      alert(response.data.message);
-    } catch (error) {
-      console.error('Password reset error:', error);
-      alert('Failed to reset password.');
-      throw error;
-    }
-  };
-
   //Done
   useEffect(() => {
-    const refreshAuth = async () => {
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (refreshToken) {
-        try {
-          const { data } = await axios.get<LoginResponse>('http://104.248.45.73:8080/auth/refresh', {
-            headers: { refresh: `Bearer ${refreshToken}` }
-          });
-          localStorage.setItem('accessToken', data.token);
-          localStorage.setItem('refreshToken', data.refreshToken);
-          await fetchUserDetails();
-          console.log('Token refreshed');
-        } catch (error) {
-          console.error('Error refreshing token:', error);
-        }
-      }
-    };
-    refreshAuth();
-
+    const token = localStorage.getItem('accesstoken');
+    if (token) {
+      OpenAPI.TOKEN = token;
+      refreshAuth();
+    }
   }, []);
 
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, resetPassword, validateResetToken, changePasswordWithToken }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout, resetPassword, validateResetToken, changePasswordWithToken, refreshAuth }}>
       {children}
     </AuthContext.Provider>
   );

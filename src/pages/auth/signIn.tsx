@@ -17,7 +17,7 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { Link as RouterLink } from "react-router-dom";
-import { useAuth } from "@/utils/auth/auth-context"; 
+import { useAuth } from "@/utils/auth/auth-context";
 import Checkbox from "@mui/joy/Checkbox";
 import { useNavigate } from "react-router-dom";
 
@@ -56,20 +56,17 @@ function ColorSchemeToggle(props: IconButtonProps) {
 }
 
 export default function SignInPage() {
-  const navigate = useNavigate();
   const auth = useAuth();
-
   const handleSubmit = async (event: React.FormEvent<SignInFormElement>) => {
     event.preventDefault();
-    const { email, password, rememberMe } = event.currentTarget.elements;    
-    if (auth && email && password && rememberMe) {
+    const { email, password, rememberMe } = event.currentTarget.elements;
+    if (email && password && rememberMe) {
       try {
         await auth.login({
           email: email.value,
           password: password.value,
           rememberMe: rememberMe.checked
         });
-        navigate("/Dashboard");
       } catch (error) {
         console.error("Login error:", error);
         alert("Failed to login. Please check your credentials.");

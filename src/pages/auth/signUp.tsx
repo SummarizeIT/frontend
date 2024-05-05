@@ -16,9 +16,9 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
-import { useNavigate } from "react-router-dom";
-
-import AuthManager, { RegisterData } from "@/utils/auth";
+import { useNavigate ,Link as RouterLink } from "react-router-dom";
+import { useAuth } from "@/utils/auth/auth-context";
+import { RegisterRequest} from '@/client';
 
 interface FormElements extends HTMLFormControlsCollection {
   firstName: HTMLInputElement;
@@ -27,7 +27,7 @@ interface FormElements extends HTMLFormControlsCollection {
   password: HTMLInputElement;
   confirmpassword: HTMLInputElement;
 }
-interface SignInFormElement extends HTMLFormElement {
+interface SignUnFormElement extends HTMLFormElement {
   readonly elements: FormElements;
 }
 
@@ -59,6 +59,38 @@ export default function SignUpPage() {
   const [showPassword] = React.useState(false);
   const [showConfirmPassword] = React.useState(false);
   const navigate = useNavigate();
+  const auth = useAuth();
+  
+  const handleregister = async (event: React.FormEvent<SignUnFormElement>) => {
+    event.preventDefault();
+    const formElements = event.currentTarget.elements;
+    const registerData: RegisterRequest = {
+      name: formElements.firstName.value,
+      lastName: formElements.lastName.value,
+      email: formElements.email.value,
+      password: formElements.password.value,
+      passwordConfirm: formElements.confirmpassword.value,
+    };
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(registerData.password)) {
+      alert(
+        "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character."
+      );
+      return;
+    }
+
+    if (registerData.password !== registerData.passwordConfirm) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    try {
+      await auth.register(registerData);
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
+  };
 
   return (
     <CssVarsProvider defaultMode="system" disableTransitionOnChange>
@@ -133,10 +165,19 @@ export default function SignUpPage() {
               },
             }}
           >
-            <Stack gap={4} sx={{ mb: 2 }}>
+                        <Stack gap={4} sx={{ mb: 2 }}>
               <Stack gap={1}>
                 <Typography component="h1" level="h3">
-                  Register
+                  Sign Up
+                </Typography>
+                <Typography level="body-sm">
+                  You have an account?{" "}
+                  <RouterLink
+                    to="/signin"
+                    style={{ textDecoration: 'underline', color: '#1976d2', cursor: 'pointer' }}
+                  >
+                    Sign in!
+                  </RouterLink>
                 </Typography>
               </Stack>
             </Stack>
@@ -146,50 +187,12 @@ export default function SignUpPage() {
                   color: { xs: "#FFF", md: "text.tertiary" },
                 },
               })}
-            ></Divider>
+            >
+            </Divider>
+
             <Stack gap={4} sx={{ mt: 2 }}>
               <form
-                onSubmit={async (event: React.FormEvent<SignInFormElement>) => {
-                  event.preventDefault();
-                  const formElements = event.currentTarget.elements;
-                  const registerData: RegisterData = {
-                    name: formElements.firstName.value,
-                    lastName: formElements.lastName.value,
-                    email: formElements.email.value,
-                    password: formElements.password.value,
-                    passwordConfirm: formElements.confirmpassword.value,
-                  };
-                  // This regular expression checks for:
-                  // At least one lowercase letter ((?=.*[a-z]))
-                  // At least one uppercase letter ((?=.*[A-Z]))
-                  // At least one digit ((?=.*\d))
-                  // At least one special character ((?=.*[@$!%*?&]))
-                  // A minimum length of 8 characters ([A-Za-z\d@$!%*?&]{8,})
-                  const passwordRegex =
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-                  if (!passwordRegex.test(registerData.password)) {
-                    alert(
-                      "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character."
-                    );
-                    return;
-                  }
-
-                  if (registerData.password !== registerData.passwordConfirm) {
-                    alert("Passwords do not match.");
-                    return;
-                  }
-
-                  alert(JSON.stringify(registerData, null, 2));
-                  try {
-                    const response = await AuthManager.register(registerData);
-                    // Handle response or navigate to different page on success
-                    alert(JSON.stringify(response.data, null, 2));
-                    navigate("/signin");
-                  } catch (error) {
-                    // Handle error, e.g., display an error message
-                    console.error("Registration error:", error);
-                  }
-                }}
+                onSubmit={handleregister}
               >
                 <FormControl required>
                   <FormLabel>First name</FormLabel>
@@ -217,6 +220,7 @@ export default function SignUpPage() {
                     name="confirmpassword"
                   />
                 </FormControl>
+
                 <Stack gap={4} sx={{ mt: 2 }}>
                   <Box
                     sx={{

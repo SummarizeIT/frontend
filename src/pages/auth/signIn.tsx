@@ -17,16 +17,16 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { Link as RouterLink } from "react-router-dom";
-import AuthManager, { LoginData } from "@/utils/auth";
+import { useAuth } from "@/utils/auth/auth-context";
 import Checkbox from "@mui/joy/Checkbox";
 import { useNavigate } from "react-router-dom";
-
 
 interface FormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement;
   password: HTMLInputElement;
   rememberMe: HTMLInputElement;
 }
+
 interface SignInFormElement extends HTMLFormElement {
   readonly elements: FormElements;
 }
@@ -56,7 +56,26 @@ function ColorSchemeToggle(props: IconButtonProps) {
 }
 
 export default function SignInPage() {
-  const navigate = useNavigate();
+  const auth = useAuth();
+  const handleSubmit = async (event: React.FormEvent<SignInFormElement>) => {
+    event.preventDefault();
+    const { email, password, rememberMe } = event.currentTarget.elements;
+    if (email && password && rememberMe) {
+      try {
+        await auth.login({
+          email: email.value,
+          password: password.value,
+          rememberMe: rememberMe.checked
+        });
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("Failed to login. Please check your credentials.");
+      }
+    } else {
+      alert("Authentication context is not available.");
+    }
+  };
+
   return (
     <CssVarsProvider defaultMode="dark" disableTransitionOnChange>
       <CssBaseline />
@@ -88,7 +107,7 @@ export default function SignInPage() {
           sx={{
             display: "flex",
             flexDirection: "column",
-            minHeight: "100dvh",
+            minHeight: "100vh",
             width: "100%",
             px: 2,
           }}
@@ -153,30 +172,11 @@ export default function SignInPage() {
                 },
               })}
             >
-              or
             </Divider>
             <Stack gap={4} sx={{ mt: 2 }}>
-              <form
-                onSubmit={async (event: React.FormEvent<SignInFormElement>) => {
-                  event.preventDefault();
-                  const formElements = event.currentTarget.elements;
-                  const loginData: LoginData = {
-                    email: formElements.email.value,
-                    password: formElements.password.value,
-                    rememberMe: formElements.rememberMe.checked,
-                  };
-                  alert(JSON.stringify(loginData, null, 2));
-                  try {
-                    const response = await AuthManager.login(loginData);
-                    // Handle response or navigate to different page on success
-                    alert(JSON.stringify(response.data, null, 2));
-                    navigate("/Dashboard");
-                  } catch (error) {
-                    // Handle error, e.g., display an error message
-                    console.error("Registration error:", error);
-                  }
-                }}
-              >
+
+
+              <form onSubmit={handleSubmit}>
                 <FormControl required>
                   <FormLabel>Email</FormLabel>
                   <Input type="email" name="email" />
@@ -197,10 +197,10 @@ export default function SignInPage() {
                     }}
                   >
                     <RouterLink
-                    to="/sendEmail"
-                    style={{ color: '#1976d2', cursor: 'pointer' }}>
-                    Forgot Password
-                  </RouterLink>
+                      to="/sendEmail"
+                      style={{ color: '#1976d2', cursor: 'pointer' }}>
+                      Forgot Password
+                    </RouterLink>
                   </Box>
                   <Button type="submit" fullWidth>
                     Sign in
@@ -227,15 +227,13 @@ export default function SignInPage() {
           top: 0,
           bottom: 0,
           left: { xs: "100%", md: "50vw" },
-          transition:
-            "background-image var(--Transition-duration), left var(--Transition-duration) !important",
+          transition: "background-image var(--Transition-duration), left var(--Transition-duration) !important",
           transitionDelay: "calc(var(--Transition-duration) + 0.1s)",
           backgroundColor: "background.level1",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundImage: `url(${loginImg})`,
-         
         })}
       />
     </CssVarsProvider>

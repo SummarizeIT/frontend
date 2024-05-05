@@ -1,72 +1,52 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
 import {
-  ChonkyActions,
-  FileActionHandler,
-  FileArray,
   FileBrowser,
-  FileContextMenu,
   FileList,
   FileNavbar,
   FileToolbar,
-  setChonkyDefaults,
+  FileContextMenu,
+  FileArray,
 } from "chonky";
 import { ChonkyIconFA } from "chonky-icon-fontawesome";
-import { UserData } from "@/utils/auth/AuthTypes";
+import { setChonkyDefaults } from "chonky";
 import FolderService from "@/utils/folder/FolderServices";
-import { FolderDetailsResponse,ErrorResponse } from "@/utils/folder/FolderTypes";
-
-
+import { useAuth } from "@/utils/auth/auth-context";
+import NotFoundPage from "@/pages/Page404";
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
- 
-
-
 export const FolderViewer = () => {
-  const [rootFolderId, setRootFolderId] = useState<string|null>(null);
+
+  const auth = useAuth();
   const [filesList, setFilesList] = useState<FileArray | []>([]);
 
-  const handleFileAction: FileActionHandler = (action) => {
-    if (action.id === ChonkyActions.OpenFiles.id) {
-      const file = action.state.selectedFilesForAction[0];
-      console.log("Opened file ID:", file?.id);
+  if (!auth) {
+    return <NotFoundPage />;
+  }
+
+  const { user } = auth;
+
+  const fetchFolderDetails = async (rootFolderId:string) => {
+    const accessToken = localStorage.getItem('accessToken'); 
+    if (accessToken && rootFolderId) {
+      try {
+        const response = await FolderService.getFolderDetails(rootFolderId, accessToken);
+        if ('list' in response) {
+          setFilesList(response.list);
+        }
+      } catch (error) {
+        console.error('Error fetching folder details:', error);
+      }
     }
   };
-  useEffect(() => {
-    const fetchUserData = () => {
-      const userDataString = localStorage.getItem("user");
-      if (userDataString) {
-        const userData: UserData = JSON.parse(userDataString);
-        setRootFolderId(userData.rootFolder);
-        console.log(rootFolderId);
-      } else {
-        console.error("No user data found in localStorage");
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   useEffect(() => {
-    const fetchFolderDetails = async () => {
-      if (rootFolderId) {
-        try{
-          const response: FolderDetailsResponse | ErrorResponse = await FolderService.getFolderDetails(rootFolderId);
-          console.log('response==================',response);
-          if ('list' in response) { // Type guard to ensure response is FolderDetailsResponse
-            setFilesList(response.list);}
-  
-        }catch (error) {
-          console.error('get Folder details error:', error);
-        }
-  
-  
-      }
+    if (user && user.rootFolder) {
+      fetchFolderDetails(user.rootFolder);
     }
-    fetchFolderDetails();
-  }, [rootFolderId]);
+  }, [user]); // Re-run when user data changes
 
-  
   const folderChain = [{ id: "root", name: "Root Folder", isDir: true }];
 
   return (

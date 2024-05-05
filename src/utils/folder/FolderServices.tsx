@@ -22,12 +22,13 @@ export class FolderService {
     }
   }
 
-  static async getFolderDetails(id: string): Promise<FolderDetailsResponse | ErrorResponse> {
-    const accessToken = localStorage.getItem('accessToken');
+  static async getFolderDetails(id: string, accessToken: string|null): Promise<FolderDetailsResponse | ErrorResponse> {
     const url = `${this.baseUrl}/folder/${id}`;
     try {
+      console.log(FolderService.getAccessToken);
       const response = await axios.get(url,{
-        headers: { Authorization: `Bearer ${accessToken}` }
+        headers: { Authorization: `Bearer ${accessToken}`
+       }
       });
       return response.data;
     } catch (error) {
@@ -84,6 +85,9 @@ export class FolderService {
       console.error('Unknown error:', error);
       return { message: "An unknown error occurred" };
     }
+  }
+  private static async getAccessToken(): Promise<string | null>{
+    return localStorage.getItem('accessToken');
   }
 }
 

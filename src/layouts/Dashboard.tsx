@@ -7,7 +7,7 @@ import { CssVarsProvider } from '@mui/joy/styles';
 import Header from '@/components/dashboard/Header';
 import Sidebar from '@/components/dashboard/Sidebar';
 import { FolderViewer } from '@/components/chonky/FolderViewer';
-
+import '../styles/chonky.css'
 export default function JoyOrderDashboardTemplate() {
   return (
     <CssVarsProvider disableTransitionOnChange>

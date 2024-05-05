@@ -5,7 +5,8 @@ import { CssVarsProvider } from '@mui/joy/styles';
 
 import Header from '@/components/dashboard/Header';
 import Sidebar from '@/components/dashboard/Sidebar';
-
+import { FolderViewer } from '@/components/chonky/FolderViewer';
+import '../styles/chonky.css'
 export default function JoyOrderDashboardTemplate() {
   return (
     <CssVarsProvider disableTransitionOnChange>
@@ -47,9 +48,11 @@ export default function JoyOrderDashboardTemplate() {
               justifyContent: 'space-between',
             }}
           >
-            <Typography level="h2" component="h1">
-              Title
-            </Typography>
+            <div style={{ width: '100%' }}>
+            <FolderViewer/>
+            </div>
+              
+            
           </Box>
 
           {/* components for getting the tables and data...etc */}

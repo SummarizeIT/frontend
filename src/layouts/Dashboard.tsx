@@ -3,7 +3,6 @@ import CssBaseline from '@mui/joy/CssBaseline';
 import Typography from '@mui/joy/Typography';
 import { CssVarsProvider } from '@mui/joy/styles';
 
-
 import Header from '@/components/dashboard/Header';
 import Sidebar from '@/components/dashboard/Sidebar';
 

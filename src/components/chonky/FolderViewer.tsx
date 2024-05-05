@@ -1,3 +1,4 @@
+/*
 import React, { useEffect, useState } from "react";
 
 import {
@@ -11,7 +12,6 @@ import {
 import { ChonkyIconFA } from "chonky-icon-fontawesome";
 import { setChonkyDefaults } from "chonky";
 // import FolderService from "@/utils/folder/FolderServices";
-import { useAuth } from "@/utils/auth/auth-context";
 import NotFoundPage from "@/pages/Page404";
 import { FolderService } from "@/client/services.gen";
 
@@ -19,7 +19,6 @@ setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
 export const FolderViewer = () => {
 
-  const auth = useAuth();
   const [filesList, setFilesList] = useState<FileArray | []>([]);
 
   if (!auth) {
@@ -62,3 +61,4 @@ export const FolderViewer = () => {
     </FileBrowser>
   );
 };
+*/

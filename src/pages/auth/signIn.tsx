@@ -17,9 +17,12 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { Link as RouterLink } from "react-router-dom";
-import { useAuth } from "@/utils/auth/auth-context";
 import Checkbox from "@mui/joy/Checkbox";
+import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import { useNavigate } from "react-router-dom";
+import { AuthService, OpenAPI } from "@/client";
+import { useEffect } from "react";
+import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated'
 
 interface FormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement;
@@ -56,25 +59,31 @@ function ColorSchemeToggle(props: IconButtonProps) {
 }
 
 export default function SignInPage() {
-  const auth = useAuth();
+  const signIn = useSignIn();
+  const navigate = useNavigate();
+  const isAuthenticated = useIsAuthenticated()
+
   const handleSubmit = async (event: React.FormEvent<SignInFormElement>) => {
     event.preventDefault();
     const { email, password, rememberMe } = event.currentTarget.elements;
-    if (email && password && rememberMe) {
-      try {
-        await auth.login({
-          email: email.value,
-          password: password.value,
-          rememberMe: rememberMe.checked
-        });
-      } catch (error) {
-        console.error("Login error:", error);
-        alert("Failed to login. Please check your credentials.");
-      }
-    } else {
-      alert("Authentication context is not available.");
-    }
+
+    AuthService.login({ requestBody: { email: email.value, password: password.value, rememberMe: rememberMe.checked } }).then(response => {
+      signIn({
+        auth: {
+          token: response.token,
+          type: 'Bearer'
+        },
+        refresh: response.refreshToken,
+      });
+      OpenAPI.TOKEN = response.token;
+      navigate("/dashboard")
+    }).catch(err => alert(err))
   };
+
+  useEffect(() => {
+    if(isAuthenticated)
+      navigate("/dashboard")
+  })
 
   return (
     <CssVarsProvider defaultMode="dark" disableTransitionOnChange>
@@ -179,14 +188,14 @@ export default function SignInPage() {
               <form onSubmit={handleSubmit}>
                 <FormControl required>
                   <FormLabel>Email</FormLabel>
-                  <Input type="email" name="email" />
+                  <Input type="email" name="email" required={true} />
                 </FormControl>
                 <FormControl required>
                   <FormLabel>Password</FormLabel>
-                  <Input type="password" name="password" />
+                  <Input type="password" name="password" required={true} />
                 </FormControl>
                 <FormControl>
-                  <Checkbox size="sm" label="Remember me" name="rememberMe" />
+                  <Checkbox size="sm" label="Remember me" name="rememberMe" defaultChecked={false} />
                 </FormControl>
                 <Stack gap={4} sx={{ mt: 2 }}>
                   <Box

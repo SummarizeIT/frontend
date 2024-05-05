@@ -23,8 +23,8 @@ import { LogoIcon } from "@/components/Icons";
 import { closeSidebar } from '@/lib/DashboardUtils';
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/utils/auth/auth-context";
-
+import useSignOut from 'react-auth-kit/hooks/useSignOut';
+import { AuthService } from '@/client';
 
 
 function Toggler({
@@ -61,189 +61,184 @@ function Toggler({
 
 export default function Sidebar() {
   const navigate = useNavigate();
-  const auth = useAuth();
+  const signOut = useSignOut();
   const handlelogout = () => {
-    if (auth) {
-      try {
-        auth.logout();
-        navigate('/signin');
-      } catch (error) {
-        console.error('Logout error:', error);
-      }
-    }
+    AuthService.logout().then(() => {
+      signOut();
+    }).finally(() => navigate("/signin"))
   }
-    return (
-      <Sheet
-        className="Sidebar"
-        sx={{
-          position: { xs: 'fixed', md: 'sticky' },
-          transform: {
-            xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1)))',
-            md: 'none',
+  return (
+    <Sheet
+      className="Sidebar"
+      sx={{
+        position: { xs: 'fixed', md: 'sticky' },
+        transform: {
+          xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1)))',
+          md: 'none',
+        },
+        transition: 'transform 0.4s, width 0.4s',
+        zIndex: 10000,
+        height: '100dvh',
+        width: 'var(--Sidebar-width)',
+        top: 0,
+        p: 2,
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        borderRight: '1px solid',
+        borderColor: 'divider',
+      }}
+    >
+      <GlobalStyles
+        styles={(theme) => ({
+          ':root': {
+            '--Sidebar-width': '220px',
+            [theme.breakpoints.up('lg')]: {
+              '--Sidebar-width': '240px',
+            },
           },
-          transition: 'transform 0.4s, width 0.4s',
-          zIndex: 10000,
-          height: '100dvh',
-          width: 'var(--Sidebar-width)',
+        })}
+      />
+      <Box
+        className="Sidebar-overlay"
+        sx={{
+          position: 'fixed',
+          zIndex: 9998,
           top: 0,
-          p: 2,
-          flexShrink: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          opacity: 'var(--SideNavigation-slideIn)',
+          backgroundColor: 'var(--joy-palette-background-backdrop)',
+          transition: 'opacity 0.4s',
+          transform: {
+            xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1) + var(--SideNavigation-slideIn, 0) * var(--Sidebar-width, 0px)))',
+            lg: 'translateX(-100%)',
+          },
+        }}
+        onClick={() => closeSidebar()}
+      />
+      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+        <LogoIcon />
+        <Typography level="title-lg">Summerize IT</Typography>
+        <ColorSchemeToggle sx={{ ml: 'auto' }} />
+      </Box>
+      {/* call for the search */}
+      {/* <Input size="sm" startDecorator={<SearchRoundedIcon />} placeholder="Search" /> */}
+
+      <Divider />
+
+      <Box
+        sx={{
+          minHeight: 0,
+          overflow: 'hidden auto',
+          flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
-          gap: 2,
-          borderRight: '1px solid',
-          borderColor: 'divider',
+          [`& .${listItemButtonClasses.root}`]: {
+            gap: 1.5,
+          },
         }}
       >
-        <GlobalStyles
-          styles={(theme) => ({
-            ':root': {
-              '--Sidebar-width': '220px',
-              [theme.breakpoints.up('lg')]: {
-                '--Sidebar-width': '240px',
-              },
-            },
-          })}
-        />
-        <Box
-          className="Sidebar-overlay"
+        <List
+          size="sm"
           sx={{
-            position: 'fixed',
-            zIndex: 9998,
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            opacity: 'var(--SideNavigation-slideIn)',
-            backgroundColor: 'var(--joy-palette-background-backdrop)',
-            transition: 'opacity 0.4s',
-            transform: {
-              xs: 'translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1) + var(--SideNavigation-slideIn, 0) * var(--Sidebar-width, 0px)))',
-              lg: 'translateX(-100%)',
-            },
-          }}
-          onClick={() => closeSidebar()}
-        />
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <LogoIcon />
-          <Typography level="title-lg">Summerize IT</Typography>
-          <ColorSchemeToggle sx={{ ml: 'auto' }} />
-        </Box>
-        {/* call for the search */}
-        {/* <Input size="sm" startDecorator={<SearchRoundedIcon />} placeholder="Search" /> */}
-
-        <Divider />
-
-        <Box
-          sx={{
-            minHeight: 0,
-            overflow: 'hidden auto',
-            flexGrow: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            [`& .${listItemButtonClasses.root}`]: {
-              gap: 1.5,
-            },
+            gap: 1,
+            '--List-nestedInsetStart': '30px',
+            '--ListItem-radius': (theme) => theme.vars.radius.sm,
           }}
         >
-          <List
-            size="sm"
-            sx={{
-              gap: 1,
-              '--List-nestedInsetStart': '30px',
-              '--ListItem-radius': (theme) => theme.vars.radius.sm,
-            }}
-          >
-            <ListItem>
-              <ListItemButton>
-                <HomeRoundedIcon />
-                <ListItemContent>
-                  <Typography level="title-sm"
-                    onClick={() => navigate('/QuickAccess')}
-                  >Quick Access</Typography>
-                </ListItemContent>
-              </ListItemButton>
-            </ListItem>
+          <ListItem>
+            <ListItemButton>
+              <HomeRoundedIcon />
+              <ListItemContent>
+                <Typography level="title-sm"
+                  onClick={() => navigate('/QuickAccess')}
+                >Quick Access</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
 
-            <ListItem>
-              <ListItemButton>
-                <DashboardRoundedIcon />
-                <ListItemContent>
-                  <Typography level="title-sm"
-                    onClick={() => navigate('/Media')}
-                  >Media</Typography>
-                </ListItemContent>
-              </ListItemButton>
-            </ListItem>
+          <ListItem>
+            <ListItemButton>
+              <DashboardRoundedIcon />
+              <ListItemContent>
+                <Typography level="title-sm"
+                  onClick={() => navigate('/Media')}
+                >Media</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
 
-            <ListItem nested>
-              <Toggler
-                renderToggle={({ open, setOpen }) => (
-                  <ListItemButton onClick={() => setOpen(!open)}>
-                    <SettingsRoundedIcon />
-                    <ListItemContent>
-                      <Typography level="title-sm">Settings</Typography>
-                    </ListItemContent>
-                    <KeyboardArrowDownIcon
-                      sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
-                    />
-                  </ListItemButton>
-                )}
-              >
-                <List sx={{ gap: 0.5 }}>
-                  <ListItem sx={{ mt: 0.5 }}>
-                    <ListItemButton onClick={() => navigate('/settings/profile')}>Profile</ListItemButton>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemButton onClick={() => navigate('/settings/notifications')}>Notifications</ListItemButton>
-                  </ListItem>
-                </List>
-              </Toggler>
-            </ListItem>
+          <ListItem nested>
+            <Toggler
+              renderToggle={({ open, setOpen }) => (
+                <ListItemButton onClick={() => setOpen(!open)}>
+                  <SettingsRoundedIcon />
+                  <ListItemContent>
+                    <Typography level="title-sm">Settings</Typography>
+                  </ListItemContent>
+                  <KeyboardArrowDownIcon
+                    sx={{ transform: open ? 'rotate(180deg)' : 'none' }}
+                  />
+                </ListItemButton>
+              )}
+            >
+              <List sx={{ gap: 0.5 }}>
+                <ListItem sx={{ mt: 0.5 }}>
+                  <ListItemButton onClick={() => navigate('/settings/profile')}>Profile</ListItemButton>
+                </ListItem>
+                <ListItem>
+                  <ListItemButton onClick={() => navigate('/settings/notifications')}>Notifications</ListItemButton>
+                </ListItem>
+              </List>
+            </Toggler>
+          </ListItem>
 
 
-          </List>
+        </List>
 
-          <Card
-            invertedColors
-            variant="soft"
-            color="neutral"
-            size="sm"
-            sx={{ boxShadow: 'none' }}
-          >
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Typography level="title-sm">Need Help?</Typography>
-            </Stack>
-            <Typography level="body-xs">
-              Contact us on our support email.
-            </Typography>
-            <Button size="sm" variant="solid">
-              <a href="mailto:support@summarization.com">Contact Support</a>
-            </Button>
-          </Card>
-          <Divider />
-          {/* call organization selection */}
-        </Box>
-
+        <Card
+          invertedColors
+          variant="soft"
+          color="neutral"
+          size="sm"
+          sx={{ boxShadow: 'none' }}
+        >
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography level="title-sm">Need Help?</Typography>
+          </Stack>
+          <Typography level="body-xs">
+            Contact us on our support email.
+          </Typography>
+          <Button size="sm" variant="solid">
+            <a href="mailto:support@summarization.com">Contact Support</a>
+          </Button>
+        </Card>
         <Divider />
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          <Avatar
-            variant="outlined"
-            size="sm"
-            src=""
-          />
-          <Box sx={{ minWidth: 0, flex: 1 }}>
-            <Typography level="title-sm">User</Typography>
-            <Typography level="body-xs">User Email</Typography>
-          </Box>
-          <IconButton size="sm" variant="plain" color="neutral">
-            <LogoutRoundedIcon
-              onClick={() =>
-                handlelogout()
-              }
-            />
-          </IconButton>
+        {/* call organization selection */}
+      </Box>
+
+      <Divider />
+      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+        <Avatar
+          variant="outlined"
+          size="sm"
+          src=""
+        />
+        <Box sx={{ minWidth: 0, flex: 1 }}>
+          <Typography level="title-sm">User</Typography>
+          <Typography level="body-xs">User Email</Typography>
         </Box>
-      </Sheet>
-    );
-  }
+        <IconButton size="sm" variant="plain" color="neutral">
+          <LogoutRoundedIcon
+            onClick={() =>
+              handlelogout()
+            }
+          />
+        </IconButton>
+      </Box>
+    </Sheet>
+  );
+}

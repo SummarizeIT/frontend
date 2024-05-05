@@ -17,8 +17,7 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { useNavigate ,Link as RouterLink } from "react-router-dom";
-import { useAuth } from "@/utils/auth/auth-context";
-import { RegisterRequest} from '@/client';
+import { AuthService, RegisterRequest} from '@/client';
 
 interface FormElements extends HTMLFormControlsCollection {
   firstName: HTMLInputElement;
@@ -59,7 +58,6 @@ export default function SignUpPage() {
   const [showPassword] = React.useState(false);
   const [showConfirmPassword] = React.useState(false);
   const navigate = useNavigate();
-  const auth = useAuth();
   
   const handleregister = async (event: React.FormEvent<SignUnFormElement>) => {
     event.preventDefault();
@@ -85,11 +83,9 @@ export default function SignUpPage() {
       return;
     }
 
-    try {
-      await auth.register(registerData);
-    } catch (error) {
-      console.error("Registration error:", error);
-    }
+    AuthService.register({requestBody: registerData}).then(() => {
+      navigate("/signin")
+    }).catch(err => console.log(err))
   };
 
   return (

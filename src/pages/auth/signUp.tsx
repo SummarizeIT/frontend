@@ -87,7 +87,6 @@ export default function SignUpPage() {
 
     try {
       await auth.register(registerData);
-      navigate("/signin");
     } catch (error) {
       console.error("Registration error:", error);
     }

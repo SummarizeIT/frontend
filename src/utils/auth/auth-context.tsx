@@ -2,6 +2,8 @@ import { LoginRequest, RegisterRequest, MeResponse, PasswordRequest, PasswordRes
 import { OpenAPI } from '@/client/core/OpenAPI.ts';
 import { AccountService, AuthService } from '@/client/services.gen.ts';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+
 
 OpenAPI.BASE = 'http://localhost:8010/proxy';
 
@@ -21,6 +23,8 @@ const AuthContext = createContext<AuthContextType>(null!);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<MeResponse | null>(null);
+  const navigate = useNavigate();
+
 
   //Done
   const fetchUserDetails = async () => {
@@ -38,6 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem('refreshtoken', response.refreshToken);
         OpenAPI.TOKEN = response.token;
         fetchUserDetails();
+        navigate("/Dashboard");
       }
       ).catch(error => {
         console.log(error)
@@ -48,6 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await AuthService.register({ requestBody: request })
       .then((response) => {
         alert(response.message);
+        navigate("/signin");
       }
       ).catch(error => {
         console.log(error)

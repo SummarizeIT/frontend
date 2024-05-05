@@ -56,7 +56,6 @@ function ColorSchemeToggle(props: IconButtonProps) {
 }
 
 export default function SignInPage() {
-  const navigate = useNavigate();
   const auth = useAuth();
   const handleSubmit = async (event: React.FormEvent<SignInFormElement>) => {
     event.preventDefault();
@@ -68,7 +67,6 @@ export default function SignInPage() {
           password: password.value,
           rememberMe: rememberMe.checked
         });
-        navigate("/Dashboard");
       } catch (error) {
         console.error("Login error:", error);
         alert("Failed to login. Please check your credentials.");

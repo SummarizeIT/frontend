@@ -10,9 +10,10 @@ import {
 } from "chonky";
 import { ChonkyIconFA } from "chonky-icon-fontawesome";
 import { setChonkyDefaults } from "chonky";
-import FolderService from "@/utils/folder/FolderServices";
+// import FolderService from "@/utils/folder/FolderServices";
 import { useAuth } from "@/utils/auth/auth-context";
 import NotFoundPage from "@/pages/Page404";
+import { FolderService } from "@/client/services.gen";
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -27,22 +28,20 @@ export const FolderViewer = () => {
 
   const { user } = auth;
 
-  const fetchFolderDetails = async (rootFolderId:string) => {
-    const accessToken = localStorage.getItem('accessToken'); 
-    if (accessToken && rootFolderId) {
-      try {
-        const response = await FolderService.getFolderDetails(rootFolderId, accessToken);
-        if ('list' in response) {
-          setFilesList(response.list);
-        }
-      } catch (error) {
-        console.error('Error fetching folder details:', error);
+  const fetchFolderDetails = async (rootFolderId: string) => {
+    console.log("Fetching");
+    FolderService.getFolderById({ id: rootFolderId }).then(
+      (response) => {
+        setFilesList(response.list);
       }
-    }
+    ).catch((error) => console.error('Error fetching folder details:', error
+    ))
   };
 
   useEffect(() => {
+    console.log("User: ", user);
     if (user && user.rootFolder) {
+      console.log("Fetching folder details...");
       fetchFolderDetails(user.rootFolder);
     }
   }, [user]); // Re-run when user data changes
@@ -53,7 +52,7 @@ export const FolderViewer = () => {
     <FileBrowser
       files={filesList}
       folderChain={folderChain}
-      
+
       darkMode={true}
     >
       <FileNavbar />

@@ -81,13 +81,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   //Done
   const refreshAuth = async () => {
-    const refresh = localStorage.getItem('refreshToken');
+    const refresh = localStorage.getItem('refreshtoken');
     if (refresh) {
       await AuthService.refresh({ refresh })
         .then((response) => {
-          localStorage.setItem('Token', response.token);
-          localStorage.setItem('RefreshToken', response.refreshToken);
-          fetchUserDetails();
+          localStorage.setItem('accesstoken', response.token);
+          localStorage.setItem('refreshtoken', response.refreshToken);
         }).catch(error => console.log(error))
     }
   };
@@ -97,6 +96,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (token) {
       OpenAPI.TOKEN = token;
       refreshAuth();
+      fetchUserDetails();
     }
   }, []);
 

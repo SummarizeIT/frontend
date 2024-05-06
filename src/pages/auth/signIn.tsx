@@ -18,11 +18,11 @@ import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { Link as RouterLink } from "react-router-dom";
 import Checkbox from "@mui/joy/Checkbox";
-import useSignIn from 'react-auth-kit/hooks/useSignIn';
+import useSignIn from "react-auth-kit/hooks/useSignIn";
 import { useNavigate } from "react-router-dom";
 import { AuthService, OpenAPI } from "@/client";
 import { useEffect } from "react";
-import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated'
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 
 interface FormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement;
@@ -61,29 +61,78 @@ function ColorSchemeToggle(props: IconButtonProps) {
 export default function SignInPage() {
   const signIn = useSignIn();
   const navigate = useNavigate();
-  const isAuthenticated = useIsAuthenticated()
+  const isAuthenticated = useIsAuthenticated();
+
+  const saveCredentialsToLocalStorage = (
+    email: string,
+    password: string,
+    rememberMe: boolean
+  ) => {
+    localStorage.setItem("email", email);
+    localStorage.setItem("password", password);
+    localStorage.setItem("rememberMe", rememberMe.toString());
+    if (rememberMe) {
+      setTimeout(() => {
+        localStorage.removeItem("email");
+        localStorage.removeItem("password");
+        localStorage.removeItem("rememberMe");
+      }, 7 * 24 * 60 * 60 * 1000);// 7days
+    }
+  };
+  const getEmailAndPasswordFromLocalStorage = () => {
+    const storedEmail = localStorage.getItem("email");
+    const storedPassword = localStorage.getItem("password");
+    const storedRememberMe = localStorage.getItem("rememberMe");
+    return { storedEmail, storedPassword, storedRememberMe };
+  };
 
   const handleSubmit = async (event: React.FormEvent<SignInFormElement>) => {
     event.preventDefault();
-    const { email, password, rememberMe } = event.currentTarget.elements;
+    const { email, password, rememberMe } = event.currentTarget
+      .elements as FormElements;
+    const userEmail = email.value;
+    const userPassword = password.value;
+    const rememberMeChecked = rememberMe.checked;
+    if (rememberMeChecked) {
+      saveCredentialsToLocalStorage(userEmail, userPassword, rememberMeChecked);
+    } else {
+      localStorage.removeItem("email");
+      localStorage.removeItem("password");
+      localStorage.removeItem("rememberMe");
+    }
 
-    AuthService.login({ requestBody: { email: email.value, password: password.value, rememberMe: rememberMe.checked } }).then(response => {
-      signIn({
-        auth: {
-          token: response.token,
-          type: 'Bearer'
-        },
-        refresh: response.refreshToken,
-      });
-      OpenAPI.TOKEN = response.token;
-      navigate("/dashboard")
-    }).catch(err => alert(err))
+    AuthService.login({
+      requestBody: {
+        email: email.value,
+        password: password.value,
+        rememberMe: rememberMe.checked,
+      },
+    })
+      .then((response) => {
+        signIn({
+          auth: {
+            token: response.token,
+            type: "Bearer",
+          },
+          refresh: response.refreshToken,
+        });
+        OpenAPI.TOKEN = response.token;
+        navigate("/dashboard");
+      })
+      .catch((err) => alert(err));
   };
 
   useEffect(() => {
-    if(isAuthenticated)
-      navigate("/dashboard")
-  })
+    const { storedEmail, storedPassword, storedRememberMe } =
+      getEmailAndPasswordFromLocalStorage();
+    if (storedEmail && storedPassword && storedRememberMe === "true") {
+      document.querySelector('input[name="email"]')!.value = storedEmail;
+      document.querySelector('input[name="password"]')!.value = storedPassword;
+      document.querySelector('input[name="rememberMe"]')!.checked = storedRememberMe;      
+    }
+
+    if (isAuthenticated) navigate("/dashboard");
+  });
 
   return (
     <CssVarsProvider defaultMode="dark" disableTransitionOnChange>
@@ -167,7 +216,11 @@ export default function SignInPage() {
                   You don't have an account?{" "}
                   <RouterLink
                     to="/signUp"
-                    style={{ textDecoration: 'underline', color: '#1976d2', cursor: 'pointer' }}
+                    style={{
+                      textDecoration: "underline",
+                      color: "#1976d2",
+                      cursor: "pointer",
+                    }}
                   >
                     Sign up!
                   </RouterLink>
@@ -180,11 +233,8 @@ export default function SignInPage() {
                   color: { xs: "#FFF", md: "text.tertiary" },
                 },
               })}
-            >
-            </Divider>
+            ></Divider>
             <Stack gap={4} sx={{ mt: 2 }}>
-
-
               <form onSubmit={handleSubmit}>
                 <FormControl required>
                   <FormLabel>Email</FormLabel>
@@ -195,7 +245,12 @@ export default function SignInPage() {
                   <Input type="password" name="password" required={true} />
                 </FormControl>
                 <FormControl>
-                  <Checkbox size="sm" label="Remember me" name="rememberMe" defaultChecked={false} />
+                  <Checkbox
+                    size="sm"
+                    label="Remember me"
+                    name="rememberMe"
+                    defaultChecked={false}
+                  />
                 </FormControl>
                 <Stack gap={4} sx={{ mt: 2 }}>
                   <Box
@@ -207,7 +262,8 @@ export default function SignInPage() {
                   >
                     <RouterLink
                       to="/sendEmail"
-                      style={{ color: '#1976d2', cursor: 'pointer' }}>
+                      style={{ color: "#1976d2", cursor: "pointer" }}
+                    >
                       Forgot Password
                     </RouterLink>
                   </Box>
@@ -229,21 +285,22 @@ export default function SignInPage() {
         </Box>
       </Box>
       <Box
-        sx={({
+        sx={{
           height: "100%",
           position: "fixed",
           right: 0,
           top: 0,
           bottom: 0,
           left: { xs: "100%", md: "50vw" },
-          transition: "background-image var(--Transition-duration), left var(--Transition-duration) !important",
+          transition:
+            "background-image var(--Transition-duration), left var(--Transition-duration) !important",
           transitionDelay: "calc(var(--Transition-duration) + 0.1s)",
           backgroundColor: "background.level1",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundImage: `url(${loginImg})`,
-        })}
+        }}
       />
     </CssVarsProvider>
   );

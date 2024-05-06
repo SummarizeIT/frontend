@@ -15,6 +15,10 @@ import { AuthService } from "./client/services.gen.ts";
 import AuthProvider from 'react-auth-kit'
 import AuthOutlet from '@auth-kit/react-router/AuthOutlet'
 import { OpenAPI } from "./client/index.ts";
+import Media from "./pages/Media/media.tsx";
+import ProfileSettings from "./pages/Settings/profile.tsx";
+import NotificationsSettings from "./pages/Settings/notifications.tsx";
+
 
 const refresh = createRefresh({
   interval: 10,
@@ -42,7 +46,7 @@ const refresh = createRefresh({
 })
 
 const store = createStore({
-  authName:'_auth',
+  authName:'token',
   authType:'localstorage',
   refresh: refresh
 });
@@ -58,6 +62,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/signUp" element={<SignUpPage />} />  
             <Route element={<AuthOutlet fallbackPath='/signin' />}>
               <Route path="/Dashboard" element={<Dashboard />} />
+              <Route path="/Media" element={<Media/>}/>
+              <Route path="/settings/profile" element={<ProfileSettings/>}/>
+              <Route path="/settings/notifications" element={<NotificationsSettings/>}/>
             </Route>
             {/* <Route path="/sendemail" element={<SendEmail />} /> */}
           </Routes>

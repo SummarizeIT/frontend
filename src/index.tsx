@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Landingpage from "./landingpage.tsx";
 import Dashboard from "./layouts/Dashboard.tsx";
-//import SendEmail from "./pages/auth/sendEmail.tsx";
 import SignInPage from "./pages/auth/signIn.tsx";
 import SignUpPage from "./pages/auth/signUp.tsx";
 import NotFoundPage from "./pages/Page404.tsx";
@@ -18,6 +17,7 @@ import Media from "./pages/Media/media.tsx";
 import ProfileSettings from "./pages/Settings/profile.tsx";
 import NotificationsSettings from "./pages/Settings/notifications.tsx";
 import { UserProvider } from './utils/user/user-context'
+import SendEmail from "./pages/auth/sendEmail.tsx";
 
 
 const refresh = createRefresh({
@@ -60,7 +60,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/*" element={<NotFoundPage />} />
             <Route path="/" element={<Landingpage />} />
             <Route path="/signin" element={<SignInPage />} />
-            <Route path="/signUp" element={<SignUpPage />} />  
+            <Route path="/signUp" element={<SignUpPage />} />
+            <Route path="/sendemail" element={<SendEmail/>} />   
             <Route element={<AuthOutlet fallbackPath='/signin' />}>
               
                 <Route path="/Dashboard" element={<Dashboard />} />
@@ -69,7 +70,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 <Route path="/settings/notifications" element={<NotificationsSettings/>}/>
               
             </Route>
-            {/* <Route path="/sendemail" element={<SendEmail />} /> */}
+
           </Routes>
           </UserProvider>
         </AuthProvider>

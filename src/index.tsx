@@ -18,6 +18,7 @@ import ProfileSettings from "./pages/Settings/profile.tsx";
 import NotificationsSettings from "./pages/Settings/notifications.tsx";
 import { UserProvider } from './utils/user/user-context'
 import SendEmail from "./pages/auth/sendEmail.tsx";
+import ForgotPassword from "./pages/auth/forgotPassword.tsx";
 
 
 const refresh = createRefresh({
@@ -62,6 +63,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signUp" element={<SignUpPage />} />
             <Route path="/sendemail" element={<SendEmail/>} />   
+            <Route path="/sendEmail/forgotPassword/:token" element={<ForgotPassword />} />
+
             <Route element={<AuthOutlet fallbackPath='/signin' />}>
               
                 <Route path="/Dashboard" element={<Dashboard />} />

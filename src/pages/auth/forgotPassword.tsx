@@ -18,6 +18,7 @@ import loginImg from "../../assets/loginimg.png";
 import { LogoIcon } from "../../components/Icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthService } from "@/client";
+import NotFoundPage from "@/pages/Page404";
 
 function ColorSchemeToggle(props: IconButtonProps) {
     const { onClick, ...other } = props;
@@ -48,6 +49,8 @@ export default function ForgotPassword() {
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const [validToken, setValidToken] = useState(false);
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         if (token) {
@@ -59,6 +62,8 @@ export default function ForgotPassword() {
                 })
                 .catch(error => {
                     console.error("Token validation failed", error);
+                }).finally(() => {
+                    setLoading(false); 
                 });
         } else {
             console.error("Token not found in URL");
@@ -87,12 +92,11 @@ export default function ForgotPassword() {
             });
         }
     };
+    if (loading) {
+        return <div>Loading...</div>;
+    }
     if (!validToken)
-        return <div>
-            <h1>Invalid Token</h1>
-            <p>Token is invalid or expired. Please try again.</p>
-            <button onClick={() => navigate("/sendemail")}> click here to Go back: Here</button>
-        </div>;
+        return <NotFoundPage />;
 
     return (
         <CssVarsProvider defaultMode="dark" disableTransitionOnChange>

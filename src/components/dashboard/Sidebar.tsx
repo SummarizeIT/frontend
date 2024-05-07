@@ -1,5 +1,4 @@
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
@@ -19,12 +18,14 @@ import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import * as React from "react";
 
+import { MeResponse } from "@/client";
 import { LogoIcon } from "@/components/Icons";
 import { closeSidebar } from "@/lib/DashboardUtils";
-import ColorSchemeToggle from "./ColorSchemeToggle";
-import { useNavigate } from "react-router-dom";
+import { useUserContext } from "@/utils/user/user-context";
+import { useEffect, useState } from "react";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
-import { AuthService } from "@/client";
+import { useNavigate } from "react-router-dom";
+import ColorSchemeToggle from "./ColorSchemeToggle";
 
 function Toggler({
   defaultExpanded = false,
@@ -61,6 +62,17 @@ function Toggler({
 export default function Sidebar() {
   const navigate = useNavigate();
   const signOut = useSignOut();
+  const userContext = useUserContext();
+  const [user, setUser] = useState<MeResponse | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await userContext?.getUser();
+      setUser(userData);
+    };
+    fetchUser();
+  }, []);
+
   return (
     <Sheet
       className="Sidebar"
@@ -213,18 +225,33 @@ export default function Sidebar() {
 
       <Divider />
       <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <Avatar variant="outlined" size="sm" src="" />
+        <Avatar variant="outlined" size="sm" src={user?.avatar} />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography level="title-sm">User</Typography>
-          <Typography level="body-xs">User Email</Typography>
-        </Box>
-        <IconButton size="sm" variant="plain" color="neutral">
-          <LogoutRoundedIcon
-            onClick={() => {
-              signOut();
-              navigate("/signin");
+          <Typography level="title-sm">
+            {user?.firstName} {user?.lastName}
+          </Typography>
+          <Typography
+            level="body-xs"
+            sx={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "100%",
             }}
-          />
+          >
+            {user?.email}
+          </Typography>
+        </Box>
+        <IconButton
+          size="sm"
+          variant="plain"
+          color="neutral"
+          onClick={() => {
+            signOut();
+            navigate("/signin");
+          }}
+        >
+          <LogoutRoundedIcon />
         </IconButton>
       </Box>
     </Sheet>

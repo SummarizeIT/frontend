@@ -1,19 +1,16 @@
-import { EntryService } from '@/client';
-import { useUserContext } from '@/utils/user/user-context';
 import Box from '@mui/joy/Box';
 import CssBaseline from '@mui/joy/CssBaseline';
 import Stack from '@mui/joy/Stack';
 import { CssVarsProvider } from '@mui/joy/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Header from '../dashboard/Header';
-import Sidebar from '../dashboard/Sidebar';
 import MediaPlayer from './mediaPlayer';
 import { ObjectiveProps } from './objective';
 import { RecommendationsProps } from './recommendations';
 import RightTab from './rightTab';
 import { TestBankProps } from './testBank';
-
+import { EntryService } from '@/client';
+import NavBar from '@/components/fileview/components/NavBar'
 interface MediaPageProps {
   mediaUrl?: string;
   objectiveProps?: ObjectiveProps;
@@ -23,21 +20,11 @@ interface MediaPageProps {
   description?: string;
 }
 
-const MediaPage: React.FC<MediaPageProps> = ({
-
-
+const PublicView: React.FC<MediaPageProps> = ({
 }) => {
   const { id } = useParams<{ id: string }>();
   const [url, setUrl] = useState<string | null>(null);
-  const userContext = useUserContext();
 
-  useEffect(() => {
-    console.log("In folder Viewer ", userContext);
-    const setRoot = async () => {
-      const user = await userContext?.getUser();
-    };
-    setRoot();
-  }, []);
 
   const getEntryDetails = useCallback(
     () => {
@@ -57,7 +44,6 @@ const MediaPage: React.FC<MediaPageProps> = ({
       getEntryDetails();
     }
   }, [getEntryDetails, id]);
-
   const recommendedReadings = [
     "React Official Documentation",
     "Thinking in React",
@@ -95,34 +81,14 @@ const MediaPage: React.FC<MediaPageProps> = ({
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-        <Box
-          component="main"
-          className="MainContent"
-          sx={{
-            px: { xs: 2, md: 6 },
-            pt: {
-              xs: 'calc(12px + var(--Header-height))',
-              sm: 'calc(12px + var(--Header-height))',
-              md: 3,
-            },
-            pb: { xs: 2, sm: 2, md: 3 },
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            minWidth: 0,
-            gap: 1,
-          }}
-        >
-          <Box component="main" sx={{ height: 'calc(100vh - 55px)', display: 'grid', gridTemplateColumns: { xs: 'auto', md: '60% 40%' }, gridTemplateRows: 'auto 1fr auto', }}>
-            <Stack sx={{ backgroundColor: 'background.surface', px: { xs: 2, md: 4 }, py: 2, borderBottom: '1px solid', borderColor: 'divider', }}><MediaPlayer url={url!} /></Stack>
-            <Box sx={{ gridRow: 'span 3', display: { xs: 'none', md: 'flex' }, }}><RightTab recommendationsProps={recommendationsProps} objectiveProps={objectiveProps} /></Box>
-            <Stack spacing={2} sx={{ px: { xs: 2, md: 4 }, pt: 2, minHeight: 0 }}>Bottom</Stack>
-          </Box>
-        </Box>
+      <NavBar/>
+      <Box component="main" sx={{ height: 'calc(100vh - 55px)', display: 'grid', gridTemplateColumns: { xs: 'auto', md: '60% 40%' }, gridTemplateRows: 'auto 1fr auto', }}>
+        <Stack sx={{ backgroundColor: 'background.surface', px: { xs: 2, md: 4 }, py: 2, borderBottom: '1px solid', borderColor: 'divider', }}><MediaPlayer url={url!} /></Stack>
+        <Box sx={{ gridRow: 'span 3', display: { xs: 'none', md: 'flex' }, }}><RightTab recommendationsProps={recommendationsProps} objectiveProps={objectiveProps} /></Box>
+        <Stack spacing={2} sx={{ px: { xs: 2, md: 4 }, pt: 2, minHeight: 0 }}>Bottom</Stack>
       </Box>
     </CssVarsProvider>
   );
 };
 
-export default MediaPage;
+export default PublicView;

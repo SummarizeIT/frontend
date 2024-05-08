@@ -1,25 +1,9 @@
-import { MeResponse } from "@/client";
 import { LogoIcon } from "@/components/Icons";
-import { useUserContext } from "@/utils/user/user-context";
 import { Box } from '@mui/joy';
-import Avatar from '@mui/joy/Avatar';
-import Typography from '@mui/joy/Typography';
-import { useEffect, useState } from "react";
+import { NavigationMenuItem } from "@radix-ui/react-navigation-menu";
 import ColorSchemeToggle from './ColorSchemeToggle';
 
-
-
 export default function HeaderSection() {
-  const userContext = useUserContext();
-  const [user, setUser] = useState<MeResponse | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const userData = await userContext?.getUser();
-      setUser(userData);
-    };
-    fetchUser();
-  }, []);
   return (
     <Box
       sx={{
@@ -38,17 +22,13 @@ export default function HeaderSection() {
         position: 'sticky',
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 1.5,
-        }}
-      >
-        <LogoIcon />
-        <Typography level="title-lg">Summerize IT</Typography>
-      </Box>
+      <NavigationMenuItem className="font-bold flex">
+        <a href="/" className="ml-2 font-bold text-xl flex items-center">
+          {" "}
+          <LogoIcon />
+          <span className="ml-2">SummerizeIT</span>{" "}
+        </a>
+      </NavigationMenuItem>
 
       <Box sx={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
         <Box
@@ -58,27 +38,6 @@ export default function HeaderSection() {
             display: { xs: 'none', sm: 'flex' },
           }}
         >
-          <Avatar
-            variant="outlined"
-            size="sm"
-            src={user?.avatar}
-          />
-          <Box sx={{ minWidth: 0, flex: 1 }}>
-            <Typography level="title-sm">
-              {user?.firstName} {user?.lastName}
-            </Typography>
-            <Typography
-              level="body-xs"
-              sx={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                maxWidth: "100%",
-              }}
-            >
-              {user?.email}
-            </Typography>
-          </Box>
         </Box>
         <ColorSchemeToggle sx={{ alignSelf: 'center' }} />
       </Box>

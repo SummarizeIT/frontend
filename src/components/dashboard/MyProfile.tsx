@@ -84,6 +84,16 @@ export default function MyProfile() {
 
     window.location.reload();
   };
+
+  const RemoveImage = async () => {
+    try {
+      await AccountService.clearMyAvatar();
+    } catch (error) {
+      console.error(error);
+    }
+    window.location.reload();
+  };
+
   return (
     <Box sx={{ flex: 1, width: "100%" }}>
       <Stack
@@ -152,6 +162,16 @@ export default function MyProfile() {
                 accept="image/*"
                 onChange={handleImageChange}
               />
+              <Button
+                component="label"
+                role={undefined}
+                tabIndex={-1}
+                variant="outlined"
+                color="neutral"
+                onClick={RemoveImage}
+              >
+                Remove Avatar
+              </Button>
             </Stack>
             <Stack spacing={2} sx={{ flexGrow: 1 }}>
               <Stack spacing={1}>
@@ -189,7 +209,14 @@ export default function MyProfile() {
           </Stack>
           <CardOverflow sx={{ borderTop: "1px solid", borderColor: "divider" }}>
             <CardActions sx={{ alignSelf: "flex-end", pt: 2 }}>
-              <Button size="sm" variant="solid" onClick={handleSubmit}>
+              <Button
+                component="label"
+                role={undefined}
+                tabIndex={-1}
+                variant="outlined"
+                color="neutral"
+                onClick={handleSubmit}
+              >
                 Save
               </Button>
             </CardActions>

@@ -13,6 +13,40 @@ interface RightTabProps {
   recommendationsProps?: RecommendationsProps;
 }
 
+const recommendedReadings = [
+    "React Official Documentation",
+    "Thinking in React",
+    "React Patterns"
+  ];
+
+  const readingURLs = [
+    "https://reactjs.org/docs/getting-started.html",
+    "https://reactjs.org/docs/thinking-in-react.html",
+    "https://reactpatterns.com/"
+  ];
+
+  const questions = [
+  "What is the capital of France?",
+  "Who wrote 'To Kill a Mockingbird'?",
+  "What is the chemical symbol for gold?"
+];
+
+const answers = [
+  ["Paris", "Lyon", "Marseille", "Bordeaux"],
+  ["Harper Lee", "Ernest Hemingway", "J.K. Rowling", "Mark Twain"],
+  ["Au", "Ag", "Fe", "Cu"]
+];
+
+const correctAnswers = [
+  "Paris",
+  "Harper Lee",
+  "Au"
+];
+  const testBankProps: TestBankProps = {questionList: questions, answerList: answers, correctAnswers: correctAnswers};
+  const recommendationsProps: RecommendationsProps = {recommendationsList: recommendedReadings, recommendationsURL: readingURLs};
+
+  const objectiveProps: ObjectiveProps = {objectiveList: ["Objective 1", "Objective 2", "Objective 3"]};
+
 const RightTab: React.FC<RightTabProps> = ({
   objectiveProps,
   testBankProps,

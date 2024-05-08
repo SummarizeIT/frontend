@@ -19,7 +19,7 @@ import NotificationsSettings from "./pages/Settings/notifications.tsx";
 import { UserProvider } from './utils/user/user-context'
 import SendEmail from "./pages/auth/sendEmail.tsx";
 import ForgotPassword from "./pages/auth/forgotPassword.tsx";
-
+import MediaPage from "./components/mediaPage/mediaPage.tsx";
 
 const refresh = createRefresh({
   interval: 10,
@@ -64,14 +64,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/signUp" element={<SignUpPage />} />
             <Route path="/sendemail" element={<SendEmail/>} />   
             <Route path="/sendEmail/forgotPassword/:token" element={<ForgotPassword />} />
+            
 
             <Route element={<AuthOutlet fallbackPath='/signin' />}>
-              
                 <Route path="/Dashboard" element={<Dashboard />} />
                 <Route path="/Media" element={<Media/>}/>
                 <Route path="/settings/profile" element={<ProfileSettings/>}/>
                 <Route path="/settings/notifications" element={<NotificationsSettings/>}/>
-              
+                <Route path="/View/:id" element={<MediaPage/>}/>
             </Route>
 
           </Routes>

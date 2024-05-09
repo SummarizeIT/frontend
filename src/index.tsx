@@ -73,7 +73,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               <Route path="/Media" element={<Media />} />
               <Route path="/settings/profile" element={<ProfileSettings />} />
               <Route path="/settings/notifications" element={<NotificationsSettings />} />
-              <Route path="/media/:id" element={<Mediaview />} />
+              <Route path="/view/:id" element={<Mediaview />} />
             </Route>
 
           </Routes>

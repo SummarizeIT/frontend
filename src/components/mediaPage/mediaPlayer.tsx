@@ -5,7 +5,16 @@ interface MediaPlayerProps {
 }
 
 const MediaPlayer: React.FC<MediaPlayerProps> = ({ url }) => {
-  return <ReactPlayer url={url} controls />;
+  return (
+  <div className='player-wrapper'>
+  <ReactPlayer
+    className='react-player'
+    url={url} controls
+    width='100%'
+    height='100%'
+  />
+</div>
+  );
 };
 
 export default MediaPlayer;

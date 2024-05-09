@@ -83,15 +83,13 @@ const RightTab: React.FC<RightTabProps> = ({
   }
 
   return (
-    <Tabs aria-label="Basic tabs" defaultValue={0} >
+    <Tabs aria-label="Basic tabs" defaultValue={0} sx={{ height: '100%' ,border:'1px bold black'}}>
       <TabList sx={{
-          position: 'sticky',
-          top: 0, 
-          zIndex: 1100, 
-          backgroundColor: 'background.default', 
+        width: "100%",
         }} >{tabs}</TabList>
       {tabPanels}
     </Tabs>
+    
   );
 };
 

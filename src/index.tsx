@@ -69,7 +69,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
 
             <Route element={<AuthOutlet fallbackPath='/signin' />}>
-              <Route path="/Home" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/Media" element={<Media />} />
               <Route path="/settings/profile" element={<ProfileSettings />} />
               <Route path="/settings/notifications" element={<NotificationsSettings />} />

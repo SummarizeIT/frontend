@@ -156,7 +156,7 @@ export default function Sidebar() {
             "--ListItem-radius": (theme) => theme.vars.radius.sm,
           }}
         >
-          <ListItem onClick={() => navigate("/Home")}>
+          <ListItem onClick={() => navigate("/dashboard")}>
             <ListItemButton>
               <HomeRoundedIcon />
               <ListItemContent>

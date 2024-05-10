@@ -117,7 +117,7 @@ export default function SignInPage() {
           refresh: response.refreshToken,
         });
         OpenAPI.TOKEN = response.token;
-        navigate("/Home");
+        navigate("/dashboard");
       })
       .catch((err) => alert(err));
   };

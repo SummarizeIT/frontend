@@ -33,9 +33,7 @@ export default function Media() {
             gap: 1,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* Here we should call the path of the the current page... */}
-          </Box>
+
           {/** here the title of the page will be called */}
           <Box
             sx={{
@@ -48,7 +46,7 @@ export default function Media() {
               justifyContent: "space-between",
             }}
           >
-            <Typography level="h2">Media</Typography>
+            <Typography level="h4">Media</Typography>
             <div style={{ width: "100%" }}><FolderViewer/></div>
           </Box>
 

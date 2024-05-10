@@ -1,5 +1,7 @@
 
 .chonky-chonkyRoot {
-    background: transparent !important;
-    /* border: solid 1px rgba(255, 255, 255, 0.12) !important; */
-  }
+  background: transparent !important;
+}
+.chonky-chonkyRoot{
+  min-height: calc(100vh - 150px);
+} 

@@ -1,8 +1,7 @@
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
-import Avatar from "@mui/joy/Avatar";
+import FolderIcon from '@mui/icons-material/Folder';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';import Avatar from "@mui/joy/Avatar";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
 import Card from "@mui/joy/Card";
@@ -26,6 +25,7 @@ import { useEffect, useState } from "react";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
 import { useNavigate } from "react-router-dom";
 import ColorSchemeToggle from "./ColorSchemeToggle";
+import NotificationsNoneRoundedIcon from '@mui/icons-material/NotificationsNoneRounded';
 
 function Toggler({
   defaultExpanded = false,
@@ -119,7 +119,8 @@ export default function Sidebar() {
           backgroundColor: "var(--joy-palette-background-backdrop)",
           transition: "opacity 0.4s",
           transform: {
-            xs: "translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1) + var(--SideNavigation-slideIn, 0) * var(--Sidebar-width, 0px)))",
+            xs:
+              "translateX(calc(100% * (var(--SideNavigation-slideIn, 0) - 1) + var(--SideNavigation-slideIn, 0) * var(--Sidebar-width, 0px)))",
             lg: "translateX(-100%)",
           },
         }}
@@ -155,46 +156,41 @@ export default function Sidebar() {
             "--ListItem-radius": (theme) => theme.vars.radius.sm,
           }}
         >
-          <ListItem onClick={() => navigate("/Media")}>
+          <ListItem onClick={() => navigate("/Home")}>
             <ListItemButton>
-              <DashboardRoundedIcon />
+              <HomeRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm">
-                  Media
-                </Typography>
+                <Typography level="title-sm">Home</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>
-
-          <ListItem nested>
-            <Toggler
-              renderToggle={({ open, setOpen }) => (
-                <ListItemButton onClick={() => setOpen(!open)}>
-                  <SettingsRoundedIcon />
-                  <ListItemContent>
-                    <Typography level="title-sm">Settings</Typography>
-                  </ListItemContent>
-                  <KeyboardArrowDownIcon
-                    sx={{ transform: open ? "rotate(180deg)" : "none" }}
-                  />
-                </ListItemButton>
-              )}
-            >
-              <List sx={{ gap: 0.5 }}>
-                <ListItem sx={{ mt: 0.5 }} onClick={() => navigate("/settings/profile")}>
-                  <ListItemButton >
-                    Profile
-                  </ListItemButton>
-                </ListItem>
-                <ListItem onClick={() => navigate("/settings/notifications")}>
-                  <ListItemButton>
-                    Notifications
-                  </ListItemButton>
-                </ListItem>
-              </List>
-            </Toggler>
+          <ListItem onClick={() => navigate("/Media")}>
+            <ListItemButton>
+              <FolderIcon />
+              <ListItemContent>
+                <Typography level="title-sm">Media</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+          <ListItem onClick={() => navigate("/settings/profile")}>
+            <ListItemButton>
+              <ManageAccountsRoundedIcon/>
+              <ListItemContent>
+                <Typography level="title-sm">Profile</Typography>
+              </ListItemContent>
+            </ListItemButton>
+          </ListItem>
+          <ListItem onClick={() => navigate("/settings/notifications")}>
+            <ListItemButton>
+              <NotificationsNoneRoundedIcon/>
+              <ListItemContent>
+                <Typography level="title-sm">Notifications</Typography>
+              </ListItemContent>
+            </ListItemButton>
           </ListItem>
         </List>
+
+        <Divider />
 
         <Card
           invertedColors

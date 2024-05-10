@@ -8,13 +8,11 @@ import MediaPlayer from './parts/mediaPlayer';
 import { ObjectiveProps } from './extensions/objective';
 import { RecommendationsProps } from './extensions/recommendations';
 import RightTab from './parts/rightTab';
-import { TestBankProps } from './testBank';
 import { EntryService } from '@/client';
 import NavBar from '@/components/fileview/components/NavBar'
 interface MediaPageProps {
   mediaUrl?: string;
   objectiveProps?: ObjectiveProps;
-  testBankProps?: TestBankProps;
   recommendationsProps?: RecommendationsProps;
   transcription?: string;
   description?: string;
@@ -56,24 +54,7 @@ const PublicView: React.FC<MediaPageProps> = ({
     "https://reactpatterns.com/"
   ];
 
-  const questions = [
-    "What is the capital of France?",
-    "Who wrote 'To Kill a Mockingbird'?",
-    "What is the chemical symbol for gold?"
-  ];
 
-  const answers = [
-    ["Paris", "Lyon", "Marseille", "Bordeaux"],
-    ["Harper Lee", "Ernest Hemingway", "J.K. Rowling", "Mark Twain"],
-    ["Au", "Ag", "Fe", "Cu"]
-  ];
-
-  const correctAnswers = [
-    "Paris",
-    "Harper Lee",
-    "Au"
-  ];
-  const testBankProps: TestBankProps = { questionList: questions, answerList: answers, correctAnswers: correctAnswers };
   const recommendationsProps: RecommendationsProps = { recommendationsList: recommendedReadings, recommendationsURL: readingURLs };
 
   const objectiveProps: ObjectiveProps = { objectiveList: ["Objective 1", "Objective 2", "Objective 3"] };

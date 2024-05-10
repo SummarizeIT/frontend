@@ -17,6 +17,7 @@ import { useCallback, useEffect, useState } from "react";
 import { RenameFolder, customActions } from "./ChonkyCustomActions";
 import { Extension } from "@/client";
 import { useColorScheme } from '@mui/joy/styles';
+import { useNavigate } from "react-router-dom";
 
 // @ts-expect-error
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
@@ -115,6 +116,7 @@ export const FolderViewer = () => {
   const userContext = useUserContext();
   const {mode}=useColorScheme();
   const [darkMode,setDarkMode]=useState<boolean>(mode==="dark");  
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("In folder Viewer ", userContext);
@@ -185,7 +187,7 @@ export const FolderViewer = () => {
 
   const openFile = useCallback(
     (fileId: string) => {
-      window.open(`/View/${fileId}`, "_blank");
+      navigate(`/View/${fileId}`);
     },
     [rootFolderID, fetchFolderDetails, currentFolderID]
   );

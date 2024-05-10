@@ -31,9 +31,7 @@ export default function Mediaview() {
                         gap: 1,
                     }}
                 >
-                    <Typography level="h2" component="h1" sx={{ mb: 3 }}>
-                        File Name
-                    </Typography>
+
                     <MediaPage />
                 </Box>
             </Box>

@@ -10,6 +10,7 @@ import { ObjectiveProps } from "./extensions/objective";
 import { RecommendationsProps } from "./extensions/recommendations";
 import RightTab from "./parts/rightTab";
 import Body from "@/components/mediaPage/parts/body";
+import Top from "@/components/mediaPage/parts/top.tsx";
 interface MediaPageProps {
   mediaUrl?: string;
   objectiveProps?: ObjectiveProps;
@@ -61,7 +62,6 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
     "https://reactpatterns.com/",
   ];
 
-
   const recommendationsProps: RecommendationsProps = {
     recommendationsList: recommendedReadings,
     recommendationsURL: readingURLs,
@@ -94,6 +94,15 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
           }}
         >
           <Box
+            sx={{
+              gridRow: "span 3",
+              display: { xs: "2", md: "2" },
+            }}
+          >
+            <Top />
+          </Box>
+          {/* player */}
+          <Box
             component="main"
             sx={{
               display: "grid",
@@ -120,7 +129,14 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
               />
             </Box>
           </Box>
-          <Box sx={{ gridRow: "span 3", display: { xs: "2", md: "2" } , minHeight:"25%"}}>
+          {/* Bottom */}
+          <Box
+            sx={{
+              gridRow: "span 3",
+              display: { xs: "2", md: "2" },
+              minHeight: "25%",
+            }}
+          >
             <Body
               recommendationsProps={recommendationsProps}
               objectiveProps={objectiveProps}

@@ -4,7 +4,11 @@ import TabList from "@mui/joy/TabList";
 import Tab from "@mui/joy/Tab";
 import TabPanel from "@mui/joy/TabPanel"; // Import TabPanel
 import Objective, { ObjectiveProps } from "../extensions/objective";
-import Recommendations, { RecommendationsProps } from "../extensions/recommendations";
+import Recommendations, {
+  RecommendationsProps,
+} from "../extensions/recommendations";
+import { IconButton } from "@mui/joy";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 
 interface bodyProps {
   objectiveProps: ObjectiveProps;
@@ -21,16 +25,14 @@ const body: React.FC<bodyProps> = ({
   if (objectiveProps) {
     tabs.push(<Tab key="Objective">Objective</Tab>);
     tabPanels.push(
-      <TabPanel key="ObjectivePanel" value={tabs.length - 1}>
-      </TabPanel>
+      <TabPanel key="ObjectivePanel" value={tabs.length - 1}></TabPanel>
     );
   }
 
   if (recommendationsProps) {
     tabs.push(<Tab key="Recommendations">Recommendations</Tab>);
     tabPanels.push(
-      <TabPanel key="RecommendationsPanel" value={tabs.length - 1}>
-      </TabPanel>
+      <TabPanel key="RecommendationsPanel" value={tabs.length - 1}></TabPanel>
     );
   }
 
@@ -42,7 +44,17 @@ const body: React.FC<bodyProps> = ({
         }}
       >
         {tabs}
+        <IconButton
+          sx={{
+            position: "absolute",
+            right: "0",
+            top: "0",
+          }}
+        >
+          <EditRoundedIcon />
+        </IconButton>
       </TabList>
+
       {tabPanels}
     </Tabs>
   );

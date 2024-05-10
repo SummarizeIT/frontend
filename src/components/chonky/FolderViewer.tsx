@@ -1,5 +1,14 @@
+import { Extension, UploadEntryRequest } from "@/client";
 import { EntryService, FolderService } from "@/client/services.gen";
 import { useUserContext } from "@/utils/user/user-context";
+import {
+  DialogContent,
+  DialogTitle,
+  Modal,
+  ModalClose,
+  ModalDialog,
+} from "@mui/joy";
+import { useColorScheme } from "@mui/joy/styles";
 import {
   ChonkyActions,
   ChonkyFileActionData,
@@ -15,8 +24,6 @@ import {
 import { ChonkyIconFA } from "chonky-icon-fontawesome";
 import { useCallback, useEffect, useState } from "react";
 import { RenameFolder, customActions } from "./ChonkyCustomActions";
-import { Extension } from "@/client";
-import { useColorScheme } from '@mui/joy/styles';
 import { useNavigate } from "react-router-dom";
 
 // @ts-expect-error
@@ -31,7 +38,9 @@ export const useFileActionHandler = (
   openFile: (fileId: string) => void,
   fileChain: FileArray,
   renameFile: (id: string, name: string) => void,
-  moveFile: (id: string, destinationId: string) => void
+  moveFile: (id: string, destinationId: string) => void,
+  uploadFile: () => void,
+  deleteFile: (id: string) => void
 ) => {
   return useCallback(
     (data: ChonkyFileActionData) => {
@@ -47,18 +56,14 @@ export const useFileActionHandler = (
           console.log("Opening file");
           openFile(fileToOpen.id);
         }
-      }
-      else if(data.id === ChonkyActions.OpenParentFolder.id){
+      } else if (data.id === ChonkyActions.OpenParentFolder.id) {
         console.log("Opening parent folder");
-        if(!fileChain)
-          return;
+        if (!fileChain) return;
         console.log("File chain:", fileChain);
-        const parentFolder = fileChain[fileChain.length-2];
+        const parentFolder = fileChain[fileChain.length - 2];
         console.log("Parent folder:", parentFolder);
-        if(parentFolder)
-          openFolder(parentFolder.id);
-      }
-      else if (data.id === ChonkyActions.CreateFolder.id) {
+        if (parentFolder) openFolder(parentFolder.id);
+      } else if (data.id === ChonkyActions.CreateFolder.id) {
         const folderName = window.prompt(
           "Provide the name for your new folder:"
         );
@@ -72,17 +77,19 @@ export const useFileActionHandler = (
         data.state.selectedFilesForAction.forEach((file) => {
           if (file.isDir) {
             deleteFolder(file.id);
+          } else {
+            deleteFile(file.id);
           }
         });
       } else if (data.id === RenameFolder.id) {
-        const fileToOpen=data.state.selectedFilesForAction[0];
+        const fileToOpen = data.state.selectedFilesForAction[0];
         if (fileToOpen && !fileToOpen.isDir) {
           const fileName = window.prompt("Provide the new name for the file:");
           if (fileName) {
             renameFile(data.state.selectedFilesForAction[0].id, fileName);
             return;
           }
-        };
+        }
         const folderName = window.prompt(
           "Provide the new name for the folder:"
         );
@@ -92,19 +99,32 @@ export const useFileActionHandler = (
       } else if (data.id === ChonkyActions.MoveFiles.id) {
         const sourceFiles = data.state.selectedFilesForAction;
         const destination = data.payload.destination;
-        if(destination && !destination.isDir)
-          return;
+        if (destination && !destination.isDir) return;
         if (sourceFiles && destination) {
           sourceFiles.forEach((file) => {
-            if(file.isDir)
-            moveFolder(file.id, destination.id);
-            else
-            moveFile(file.id, destination.id);
+            if (file.isDir) moveFolder(file.id, destination.id);
+            else moveFile(file.id, destination.id);
           });
         }
+      } else if (data.id === ChonkyActions.UploadFiles.id) {
+        console.log("Uploading files");
+        uploadFile();
+        console.log(data);
       }
     },
-    [createFolder, deleteFolder, openFolder, renameFolder, moveFolder, openFile, fileChain,renameFile,moveFile]
+    [
+      createFolder,
+      deleteFolder,
+      openFolder,
+      renameFolder,
+      moveFolder,
+      openFile,
+      fileChain,
+      renameFile,
+      moveFile,
+      uploadFile,
+      deleteFile,
+    ]
   );
 };
 
@@ -114,16 +134,14 @@ export const FolderViewer = () => {
   const [rootFolderID, setRootFolderID] = useState<string | null>(null);
   const [currentFolderID, setCurrentFolderID] = useState<string | null>(null);
   const userContext = useUserContext();
-  const {mode}=useColorScheme();
-  const [darkMode,setDarkMode]=useState<boolean>(mode==="dark");  
+  const { mode } = useColorScheme();
+  const [darkMode, setDarkMode] = useState<boolean>(mode === "dark");
+  const [open, setOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("In folder Viewer ", userContext);
-    if(mode==="dark")
-      setDarkMode(true);
-    else
-      setDarkMode(false);
+    if (mode === "dark") setDarkMode(true);
+    else setDarkMode(false);
     const setRoot = async () => {
       const user = await userContext?.getUser();
       if (user) {
@@ -135,8 +153,44 @@ export const FolderViewer = () => {
     setRoot();
   }, [mode]);
 
+  const uploadFile = useCallback(async () => {
+    setOpen(true);
+  }, []);
+
+  const handleFileSelection = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) {
+        console.error("No file selected");
+        return;
+      }
+
+      const formData = {
+        mediaFile: file,
+      };
+
+      const uploadRequest: UploadEntryRequest = {
+        title: file.name,
+        parentFolderId: currentFolderID!,
+      };
+
+      const data = {
+        uploadRequest: uploadRequest,
+        formData: formData,
+      };
+
+      try {
+        await EntryService.uploadEntry(data);
+        setOpen(false);
+        fetchFolderDetails(currentFolderID!);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    },
+    [currentFolderID]
+  );
+
   const fetchFolderDetails = useCallback(async (rootFolderID: string) => {
-    
     if (!rootFolderID) return;
     FolderService.getFolderById({ id: rootFolderID })
       .then((response) => {
@@ -199,7 +253,6 @@ export const FolderViewer = () => {
           fetchFolderDetails(currentFolderID!);
         })
         .catch((error) => console.error("Error renaming folder:", error));
-        
     },
     [rootFolderID, fetchFolderDetails, currentFolderID]
   );
@@ -207,13 +260,13 @@ export const FolderViewer = () => {
   const renameFile = useCallback(
     async (fileId: string, name: string) => {
       EntryService.getEntryById({ id: fileId }).then((response) => {
-        console.log("Response",response);
-        const title:string=name;
-        const body:string=response.body;
-        const extensions:Array<Extension>=response.extensions;
+        console.log("Response", response);
+        const title: string = name;
+        const body: string = response.body;
+        const extensions: Array<Extension> = response.extensions;
         EntryService.updateEntry({
           id: fileId,
-          requestBody: {title,body,extensions  },
+          requestBody: { title, body, extensions },
         }).then((response) => {
           fetchFolderDetails(currentFolderID!);
         });
@@ -237,7 +290,18 @@ export const FolderViewer = () => {
     [rootFolderID, fetchFolderDetails, currentFolderID]
   );
 
-  const moveFiles=useCallback(
+  const deleteFile = useCallback(
+    async (fileId: string) => {
+      EntryService.deleteEntry({ id: fileId })
+        .then((response) => {
+          fetchFolderDetails(currentFolderID!);
+        })
+        .catch((error) => console.error("Error deleting file:", error));
+    },
+    [rootFolderID, fetchFolderDetails, currentFolderID]
+  );
+
+  const moveFiles = useCallback(
     async (sourceId: string, destinationId: string) => {
       EntryService.moveEntry({
         requestBody: { destinationFolderId: destinationId },
@@ -260,7 +324,9 @@ export const FolderViewer = () => {
     openFile,
     fileChain!,
     renameFile,
-    moveFiles
+    moveFiles,
+    uploadFile,
+    deleteFile
   );
 
   useEffect(() => {
@@ -270,18 +336,34 @@ export const FolderViewer = () => {
   }, [rootFolderID, fetchFolderDetails]);
 
   return (
-    // @ts-expect-error
-    <FileBrowser
-      files={filesList}
-      folderChain={fileChain}
-      fileActions={customActions}
-      onFileAction={handleFileAction}
-      darkMode={darkMode}
-    >
-      <FileNavbar />
-      <FileToolbar />
-      <FileList />
-      <FileContextMenu />
-    </FileBrowser>
+    <>
+      {/*@ts-expect-error */}
+      <FileBrowser
+        files={filesList}
+        folderChain={fileChain}
+        fileActions={customActions}
+        onFileAction={handleFileAction}
+        darkMode={darkMode}
+      >
+        <FileNavbar />
+        <FileToolbar />
+        <FileList />
+        <FileContextMenu />
+      </FileBrowser>
+
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog>
+          <ModalClose />
+          <DialogTitle>Upload MP3 or MP4</DialogTitle>
+          <DialogContent>
+            <input
+              type="file"
+              onChange={handleFileSelection}
+              accept="video/mp4,audio/mp3"
+            />
+          </DialogContent>
+        </ModalDialog>
+      </Modal>
+    </>
   );
 };

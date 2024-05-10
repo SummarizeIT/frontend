@@ -1,22 +1,21 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { EntryService, FolderService } from "@/client/services.gen";
+import { useUserContext } from "@/utils/user/user-context";
 import {
-  FileBrowser,
   ChonkyActions,
+  ChonkyFileActionData,
+  FileArray,
+  FileBrowser,
+  FileContextMenu,
+  FileHelper,
   FileList,
   FileNavbar,
   FileToolbar,
-  FileContextMenu,
-  FileArray,
-  FileHelper,
-  ChonkyFileActionData,
   setChonkyDefaults,
 } from "chonky";
 import { ChonkyIconFA } from "chonky-icon-fontawesome";
-import { EntryService, FolderService } from "@/client/services.gen";
-import { useUserContext } from "@/utils/user/user-context";
+import { useCallback, useEffect, useState } from "react";
 import { RenameFolder, customActions } from "./ChonkyCustomActions";
-import { useNavigate } from "react-router-dom";
-import { EntryResponse } from "@/client";
+import { Extension } from "@/client";
 
 // @ts-expect-error
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
@@ -26,21 +25,38 @@ export const useFileActionHandler = (
   deleteFolder: (folderId: string) => void,
   openFolder: (folderId: string) => void,
   renameFolder: (folderId: string, name: string) => void,
-  moveFiles: (destinationId: string, sourceId: string) => void,
-  openFile: (fileId: string) => void
+  moveFolder: (destinationId: string, sourceId: string) => void,
+  openFile: (fileId: string) => void,
+  fileChain: FileArray,
+  renameFile: (id: string, name: string) => void,
+  moveFile: (id: string, destinationId: string) => void
 ) => {
   return useCallback(
     (data: ChonkyFileActionData) => {
       if (data.id === ChonkyActions.OpenFiles.id) {
         const { targetFile, files } = data.payload;
         const fileToOpen = targetFile ?? files[0];
+        console.log("File to open:", fileToOpen);
         if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
+          console.log("Opening folder");
           openFolder(fileToOpen.id);
           return;
         } else {
+          console.log("Opening file");
           openFile(fileToOpen.id);
         }
-      } else if (data.id === ChonkyActions.CreateFolder.id) {
+      }
+      else if(data.id === ChonkyActions.OpenParentFolder.id){
+        console.log("Opening parent folder");
+        if(!fileChain)
+          return;
+        console.log("File chain:", fileChain);
+        const parentFolder = fileChain[fileChain.length-2];
+        console.log("Parent folder:", parentFolder);
+        if(parentFolder)
+          openFolder(parentFolder.id);
+      }
+      else if (data.id === ChonkyActions.CreateFolder.id) {
         const folderName = window.prompt(
           "Provide the name for your new folder:"
         );
@@ -57,6 +73,14 @@ export const useFileActionHandler = (
           }
         });
       } else if (data.id === RenameFolder.id) {
+        const fileToOpen=data.state.selectedFilesForAction[0];
+        if (fileToOpen && !fileToOpen.isDir) {
+          const fileName = window.prompt("Provide the new name for the file:");
+          if (fileName) {
+            renameFile(data.state.selectedFilesForAction[0].id, fileName);
+            return;
+          }
+        };
         const folderName = window.prompt(
           "Provide the new name for the folder:"
         );
@@ -66,26 +90,28 @@ export const useFileActionHandler = (
       } else if (data.id === ChonkyActions.MoveFiles.id) {
         const sourceFiles = data.state.selectedFilesForAction;
         const destination = data.payload.destination;
-        console.log("Source Files: ", sourceFiles);
-        console.log("Destination: ", destination);
+        if(destination && !destination.isDir)
+          return;
         if (sourceFiles && destination) {
           sourceFiles.forEach((file) => {
-            moveFiles(file.id, destination.id);
+            if(file.isDir)
+            moveFolder(file.id, destination.id);
+            else
+            moveFile(file.id, destination.id);
           });
         }
       }
     },
-    [createFolder, deleteFolder, openFolder, renameFolder, moveFiles, openFile]
+    [createFolder, deleteFolder, openFolder, renameFolder, moveFolder, openFile, fileChain,renameFile,moveFile]
   );
 };
 
 export const FolderViewer = () => {
   const [filesList, setFilesList] = useState<FileArray | []>([]);
-  const [selectedFiles, setSelectedFiles] = useState<FileArray | []>([]);
+  const [fileChain, setFileChain] = useState<FileArray | null>(null);
   const [rootFolderID, setRootFolderID] = useState<string | null>(null);
   const [currentFolderID, setCurrentFolderID] = useState<string | null>(null);
   const userContext = useUserContext();
-  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("In folder Viewer ", userContext);
@@ -101,12 +127,13 @@ export const FolderViewer = () => {
   }, []);
 
   const fetchFolderDetails = useCallback(async (rootFolderID: string) => {
+    
     if (!rootFolderID) return;
-    console.log("Fetching details for folder ID:", rootFolderID);
     FolderService.getFolderById({ id: rootFolderID })
       .then((response) => {
         setFilesList(response.list);
-        setSelectedFiles(response.pathFromRoot);
+        setFileChain(response.pathFromRoot);
+        console.log("sadasdsad", fileChain);
       })
       .catch((error) => console.error("Error fetching folder details:", error));
   }, []);
@@ -114,7 +141,6 @@ export const FolderViewer = () => {
   const createFolder = useCallback(
     async (folderName: string) => {
       if (!rootFolderID) {
-        console.error("No root folder available.");
         return;
       }
       FolderService.createFolder({
@@ -152,7 +178,7 @@ export const FolderViewer = () => {
 
   const openFile = useCallback(
     (fileId: string) => {
-      window.open(`/View/${fileId}`, '_blank');
+      window.open(`/View/${fileId}`, "_blank");
     },
     [rootFolderID, fetchFolderDetails, currentFolderID]
   );
@@ -161,20 +187,35 @@ export const FolderViewer = () => {
     async (folderId: string, name: string) => {
       FolderService.updateFolder({ id: folderId, requestBody: { name: name } })
         .then((response) => {
-          console.log("Renamed folder:", response);
-          console.log("Current Folder ID:", currentFolderID);
           fetchFolderDetails(currentFolderID!);
         })
         .catch((error) => console.error("Error renaming folder:", error));
+        
     },
     [rootFolderID, fetchFolderDetails, currentFolderID]
   );
 
-  const moveFiles = useCallback(
+  const renameFile = useCallback(
+    async (fileId: string, name: string) => {
+      EntryService.getEntryById({ id: fileId }).then((response) => {
+        console.log("Response",response);
+        const title:string=name;
+        const body:string=response.body;
+        const extensions:Array<Extension>=response.extensions;
+        EntryService.updateEntry({
+          id: fileId,
+          requestBody: {title,body,extensions  },
+        }).then((response) => {
+          fetchFolderDetails(currentFolderID!);
+        });
+      });
+      fetchFolderDetails(currentFolderID!);
+    },
+    [rootFolderID, fetchFolderDetails, currentFolderID]
+  );
+
+  const moveFolder = useCallback(
     async (sourceId: string, destinationId: string) => {
-      console.log("Moving files...");
-      console.log("Destination ID:", destinationId);
-      console.log("Source ID:", sourceId);
       FolderService.moveFolder({
         requestBody: { destinationFolderId: destinationId },
         id: sourceId,
@@ -187,18 +228,34 @@ export const FolderViewer = () => {
     [rootFolderID, fetchFolderDetails, currentFolderID]
   );
 
+  const moveFiles=useCallback(
+    async (sourceId: string, destinationId: string) => {
+      EntryService.moveEntry({
+        requestBody: { destinationFolderId: destinationId },
+        id: sourceId,
+      })
+        .then((response) => {
+          fetchFolderDetails(currentFolderID!);
+        })
+        .catch((error) => console.error("Error moving file:", error));
+    },
+    [rootFolderID, fetchFolderDetails, currentFolderID]
+  );
+
   const handleFileAction = useFileActionHandler(
     createFolder,
     deleteFolder,
     openFolder,
     renameFolder,
-    moveFiles,
-    openFile
+    moveFolder,
+    openFile,
+    fileChain!,
+    renameFile,
+    moveFiles
   );
 
   useEffect(() => {
     if (rootFolderID) {
-      console.log("Fetching folder details...");
       fetchFolderDetails(rootFolderID);
     }
   }, [rootFolderID, fetchFolderDetails]);
@@ -207,7 +264,7 @@ export const FolderViewer = () => {
     // @ts-expect-error
     <FileBrowser
       files={filesList}
-      folderChain={selectedFiles}
+      folderChain={fileChain}
       fileActions={customActions}
       onFileAction={handleFileAction}
       darkMode={true}

@@ -18,8 +18,8 @@ export const RenameFolder = defineFileAction({
 export const customActions = [
   ChonkyActions.CreateFolder,
   ChonkyActions.DeleteFiles,
-  ChonkyActions.OpenFiles,
   ChonkyActions.OpenParentFolder,
+  ChonkyActions.OpenFiles,
   ChonkyActions.UploadFiles,
   ChonkyActions.MoveFiles,
   RenameFolder,

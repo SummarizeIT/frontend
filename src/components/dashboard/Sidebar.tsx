@@ -155,11 +155,11 @@ export default function Sidebar() {
             "--ListItem-radius": (theme) => theme.vars.radius.sm,
           }}
         >
-          <ListItem>
+          <ListItem onClick={() => navigate("/Media")}>
             <ListItemButton>
               <DashboardRoundedIcon />
               <ListItemContent>
-                <Typography level="title-sm" onClick={() => navigate("/Media")}>
+                <Typography level="title-sm">
                   Media
                 </Typography>
               </ListItemContent>
@@ -181,15 +181,13 @@ export default function Sidebar() {
               )}
             >
               <List sx={{ gap: 0.5 }}>
-                <ListItem sx={{ mt: 0.5 }}>
-                  <ListItemButton onClick={() => navigate("/settings/profile")}>
+                <ListItem sx={{ mt: 0.5 }} onClick={() => navigate("/settings/profile")}>
+                  <ListItemButton >
                     Profile
                   </ListItemButton>
                 </ListItem>
-                <ListItem>
-                  <ListItemButton
-                    onClick={() => navigate("/settings/notifications")}
-                  >
+                <ListItem onClick={() => navigate("/settings/notifications")}>
+                  <ListItemButton>
                     Notifications
                   </ListItemButton>
                 </ListItem>

@@ -2,22 +2,17 @@ import { EntryService } from "@/client";
 import { useUserContext } from "@/utils/user/user-context";
 import Box from "@mui/joy/Box";
 import CssBaseline from "@mui/joy/CssBaseline";
-import Stack from "@mui/joy/Stack";
 import { CssVarsProvider } from "@mui/joy/styles";
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Header from "../dashboard/Header";
-import Sidebar from "../dashboard/Sidebar";
-import MediaPlayer from "./mediaPlayer";
-import { ObjectiveProps } from "./objective";
-import { RecommendationsProps } from "./recommendations";
-import RightTab from "./rightTab";
-import { TestBankProps } from "./testBank";
-
+import MediaPlayer from "./parts/mediaPlayer";
+import { ObjectiveProps } from "./extensions/objective";
+import { RecommendationsProps } from "./extensions/recommendations";
+import RightTab from "./parts/rightTab";
+import Body from "@/components/mediaPage/parts/body";
 interface MediaPageProps {
   mediaUrl?: string;
   objectiveProps?: ObjectiveProps;
-  testBankProps?: TestBankProps;
   recommendationsProps?: RecommendationsProps;
   transcription?: string;
   description?: string;
@@ -66,24 +61,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
     "https://reactpatterns.com/",
   ];
 
-  const questions = [
-    "What is the capital of France?",
-    "Who wrote 'To Kill a Mockingbird'?",
-    "What is the chemical symbol for gold?",
-  ];
 
-  const answers = [
-    ["Paris", "Lyon", "Marseille", "Bordeaux"],
-    ["Harper Lee", "Ernest Hemingway", "J.K. Rowling", "Mark Twain"],
-    ["Au", "Ag", "Fe", "Cu"],
-  ];
-
-  const correctAnswers = ["Paris", "Harper Lee", "Au"];
-  const testBankProps: TestBankProps = {
-    questionList: questions,
-    answerList: answers,
-    correctAnswers: correctAnswers,
-  };
   const recommendationsProps: RecommendationsProps = {
     recommendationsList: recommendedReadings,
     recommendationsURL: readingURLs,
@@ -96,7 +74,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
-      <Box sx={{ display: "flex", minHeight: "100vh" }}>
+      <Box sx={{ display: "flex" }}>
         <Box
           component="main"
           className="MainContent"
@@ -118,9 +96,8 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
           <Box
             component="main"
             sx={{
-              height: "calc(100vh - 55px)",
               display: "grid",
-              gridTemplateColumns: { xs: "auto", md: "60% 40%" },
+              gridTemplateColumns: { xs: "auto", md: "70% 30%" },
               gridTemplateRows: "auto 1fr auto",
             }}
           >
@@ -129,7 +106,6 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
                 backgroundColor: "background.surface",
                 px: { xs: 2, md: 4 },
                 py: 2,
-                borderBottom: "1px solid",
                 borderColor: "divider",
                 height: "100%",
                 width: "100%",
@@ -137,19 +113,18 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
             >
               <MediaPlayer url={url!} />
             </Box>
-
             <Box sx={{ gridRow: "span 3", display: { xs: "2", md: "2" } }}>
               <RightTab
                 recommendationsProps={recommendationsProps}
                 objectiveProps={objectiveProps}
               />
             </Box>
-            <Box sx={{ gridRow: "span 3", display: { xs: "2", md: "6" } }}>
-              <RightTab
-                recommendationsProps={recommendationsProps}
-                objectiveProps={objectiveProps}
-              />
-            </Box>
+          </Box>
+          <Box sx={{ gridRow: "span 3", display: { xs: "2", md: "2" } , minHeight:"25%"}}>
+            <Body
+              recommendationsProps={recommendationsProps}
+              objectiveProps={objectiveProps}
+            />
           </Box>
         </Box>
       </Box>

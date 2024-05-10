@@ -1,5 +1,5 @@
 
-import MediaPage from '@/components/mediaPage/mediaPage';
+import MediaPage from '@/components/mediaPage/view';
 import { BrowserRouter } from 'react-router-dom';
 
 

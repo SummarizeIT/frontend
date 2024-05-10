@@ -4,10 +4,10 @@ import Stack from '@mui/joy/Stack';
 import { CssVarsProvider } from '@mui/joy/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import MediaPlayer from './mediaPlayer';
-import { ObjectiveProps } from './objective';
-import { RecommendationsProps } from './recommendations';
-import RightTab from './rightTab';
+import MediaPlayer from './parts/mediaPlayer';
+import { ObjectiveProps } from './extensions/objective';
+import { RecommendationsProps } from './extensions/recommendations';
+import RightTab from './parts/rightTab';
 import { TestBankProps } from './testBank';
 import { EntryService } from '@/client';
 import NavBar from '@/components/fileview/components/NavBar'

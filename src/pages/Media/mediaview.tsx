@@ -4,7 +4,7 @@ import Typography from '@mui/joy/Typography';
 import { CssVarsProvider } from '@mui/joy/styles';
 import Header from '@/components/dashboard/Header';
 import Sidebar from '@/components/dashboard/Sidebar';
-import MediaPage from '@/components/mediaPage/mediaPage';
+import MediaPage from '@/components/mediaPage/view';
 
 export default function Mediaview() {
     return (

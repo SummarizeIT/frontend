@@ -16,6 +16,7 @@ import { ChonkyIconFA } from "chonky-icon-fontawesome";
 import { useCallback, useEffect, useState } from "react";
 import { RenameFolder, customActions } from "./ChonkyCustomActions";
 import { Extension } from "@/client";
+import { useColorScheme } from '@mui/joy/styles';
 
 // @ts-expect-error
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
@@ -112,9 +113,15 @@ export const FolderViewer = () => {
   const [rootFolderID, setRootFolderID] = useState<string | null>(null);
   const [currentFolderID, setCurrentFolderID] = useState<string | null>(null);
   const userContext = useUserContext();
+  const {mode}=useColorScheme();
+  const [darkMode,setDarkMode]=useState<boolean>(mode==="dark");  
 
   useEffect(() => {
     console.log("In folder Viewer ", userContext);
+    if(mode==="dark")
+      setDarkMode(true);
+    else
+      setDarkMode(false);
     const setRoot = async () => {
       const user = await userContext?.getUser();
       if (user) {
@@ -124,7 +131,7 @@ export const FolderViewer = () => {
       }
     };
     setRoot();
-  }, []);
+  }, [mode]);
 
   const fetchFolderDetails = useCallback(async (rootFolderID: string) => {
     
@@ -267,7 +274,7 @@ export const FolderViewer = () => {
       folderChain={fileChain}
       fileActions={customActions}
       onFileAction={handleFileAction}
-      darkMode={true}
+      darkMode={darkMode}
     >
       <FileNavbar />
       <FileToolbar />

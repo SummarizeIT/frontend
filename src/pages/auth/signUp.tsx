@@ -18,6 +18,7 @@ import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { useNavigate ,Link as RouterLink } from "react-router-dom";
 import { AuthService, RegisterRequest} from '@/client';
+import InfoModal from "@/components/modal/InfoModal";
 
 interface FormElements extends HTMLFormControlsCollection {
   firstName: HTMLInputElement;
@@ -79,7 +80,7 @@ export default function SignUpPage() {
     }
 
     if (registerData.password !== registerData.passwordConfirm) {
-      alert("Passwords do not match.");
+      InfoModal({ infoMessage: "Passwords do not match!", infoTitle: "Error" });
       return;
     }
 

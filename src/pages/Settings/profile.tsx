@@ -48,7 +48,7 @@ export default function ProfileSettings() {
                             justifyContent: 'space-between',
                         }}
                     >
-                        <Typography level="h2" component="h1">
+                        <Typography level="h4" >
                             Profile Settings
                         </Typography>
 

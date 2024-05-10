@@ -5,3 +5,11 @@
 .chonky-chonkyRoot{
   min-height: calc(100vh - 150px);
 } 
+.MuiListItem-root{
+  padding: 0px !important;
+}
+.MuiButton-root{
+  text-transform: none !important;
+  letter-spacing: none !important;
+  padding: 0px !important;
+}

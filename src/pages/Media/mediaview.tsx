@@ -31,7 +31,6 @@ export default function Mediaview() {
                         gap: 1,
                     }}
                 >
-
                     <MediaPage />
                 </Box>
             </Box>

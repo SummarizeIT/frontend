@@ -190,7 +190,6 @@ export default function Sidebar() {
           </ListItem>
         </List>
 
-        <Divider />
 
         <Card
           invertedColors
@@ -217,7 +216,6 @@ export default function Sidebar() {
         {/* call organization selection */}
       </Box>
 
-      <Divider />
       <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
         <Avatar variant="outlined" size="sm" src={user?.avatar} />
         <Box sx={{ minWidth: 0, flex: 1 }}>

@@ -48,7 +48,7 @@ export default function JoyOrderDashboardTemplate() {
             }}
           >
             <div style={{ width: '100%' }}>
-              <Typography level="h2">This is main page of the Dashboard</Typography>
+              <Typography level="h4">This is main page of the Dashboard</Typography>
             </div>
               
             

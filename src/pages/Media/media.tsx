@@ -6,7 +6,6 @@ import Header from "@/components/dashboard/Header";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { FolderViewer } from "@/components/chonky/FolderViewer";
 
-
 export default function Media() {
   return (
     <CssVarsProvider disableTransitionOnChange>
@@ -33,7 +32,9 @@ export default function Media() {
             gap: 1,
           }}
         >
-
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            {/* Here we should call the path of the the current page... */}
+          </Box>
           {/** here the title of the page will be called */}
           <Box
             sx={{
@@ -47,10 +48,10 @@ export default function Media() {
             }}
           >
             <Typography level="h4">Media</Typography>
-            <div style={{ width: "100%" }}><FolderViewer/></div>
+            <div style={{ width: "100%", height: "100%" }}>
+              <FolderViewer />
+            </div>
           </Box>
-
-          {/* components for getting the tables and data...etc */}
         </Box>
       </Box>
     </CssVarsProvider>

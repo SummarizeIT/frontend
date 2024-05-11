@@ -262,11 +262,10 @@ export const FolderViewer = () => {
       EntryService.getEntryById({ id: fileId }).then((response) => {
         console.log("Response", response);
         const title: string = name;
-        const body: string = response.body;
         const extensions: Array<Extension> = response.extensions;
         EntryService.updateEntry({
           id: fileId,
-          requestBody: { title, body, extensions },
+          requestBody: { title, extensions },
         }).then((response) => {
           fetchFolderDetails(currentFolderID!);
         });

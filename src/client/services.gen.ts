@@ -909,9 +909,7 @@ export class EntryService {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/entry',
-      query: {
-        uploadRequest: data.uploadRequest,
-      },
+      query: data.uploadRequest,
       formData: data.formData,
       mediaType: 'multipart/form-data',
       errors: {

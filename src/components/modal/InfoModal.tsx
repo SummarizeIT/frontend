@@ -1,16 +1,16 @@
 import { DialogContent, DialogTitle, Modal, ModalClose, ModalDialog } from "@mui/joy";
 import { useState } from "react";
-
 interface InfoModalProps {
     infoMessage: string;
     infoTitle: string;
+    open: boolean;
+    onClose: () => void;
 }
 
-const InfoModal: React.FC<InfoModalProps> = ({ infoMessage, infoTitle }) => {
-    const [open, setOpen] = useState(true);
+const InfoModal: React.FC<InfoModalProps> = ({ infoMessage, infoTitle,open,onClose }) => {
 
     return (
-        <Modal open={open} onClose={() => setOpen(false)}>
+        <Modal open={open} onClose={onClose}>
         <ModalDialog>
           <ModalClose />
           <DialogTitle>{infoTitle}</DialogTitle>

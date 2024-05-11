@@ -58,6 +58,9 @@ function ColorSchemeToggle(props: IconButtonProps) {
 export default function SignUpPage() {
   const [showPassword] = React.useState(false);
   const [showConfirmPassword] = React.useState(false);
+  const [InfoModalOpen, setInfoModalOpen] = React.useState(false);
+  const [infoMessage, setInfoMessage] = React.useState("");
+  const [infoTitle, setInfoTitle] = React.useState("");
   const navigate = useNavigate();
   
   const handleregister = async (event: React.FormEvent<SignUnFormElement>) => {
@@ -73,14 +76,16 @@ export default function SignUpPage() {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(registerData.password)) {
-      alert(
-        "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character."
-      );
+      setInfoMessage("Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+      setInfoTitle("Error");
+      setInfoModalOpen(true);
       return;
     }
 
     if (registerData.password !== registerData.passwordConfirm) {
-      InfoModal({ infoMessage: "Passwords do not match!", infoTitle: "Error" });
+      setInfoMessage("Passwords do not match");
+      setInfoTitle("Error");
+      setInfoModalOpen(true);
       return;
     }
 
@@ -91,6 +96,7 @@ export default function SignUpPage() {
 
   return (
     <CssVarsProvider defaultMode="system" disableTransitionOnChange>
+      <InfoModal infoMessage={infoMessage} infoTitle={infoTitle} open={InfoModalOpen} onClose={() => setInfoModalOpen(false)} />
       <CssBaseline />
       <GlobalStyles
         styles={{

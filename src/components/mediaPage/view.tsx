@@ -44,8 +44,9 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
         setTitle(response.title);
         setCreatedOn(response.createdOn);
         settranscriptionvalue(response.transcript);
-
-      
+        const bodyContent = response.extensions.find(ext => ext.identifier === "body")?.content?.text ?? " ";
+        setBody(bodyContent as string);
+        
       })
       .catch((error) => {
         console.error(error);

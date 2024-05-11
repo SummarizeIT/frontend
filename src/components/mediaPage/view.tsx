@@ -7,14 +7,12 @@ import CssBaseline from "@mui/joy/CssBaseline";
 import { CssVarsProvider } from "@mui/joy/styles";
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ObjectiveProps } from "./extensions/objective";
-import { RecommendationsProps } from "./extensions/recommendations";
 import MediaPlayer from "./parts/mediaPlayer";
 import RightTab from "./parts/rightTab";
 interface MediaPageProps {
   mediaUrl?: string;
-  objectiveProps?: ObjectiveProps;
-  recommendationsProps?: RecommendationsProps;
+  objectiveProps?: string;
+  recommendationsProps?: string;
   body?: string;
 }
 
@@ -23,11 +21,13 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
   const [url, setUrl] = useState<string | null>(null);
   const [entrytitle, setTitle] = useState<string | null>(null);
   const [createdOn, setCreatedOn] = useState<string | null>(null);
-  const [transcriptionvalue, settranscriptionvalue] = useState<
-    string | undefined
-  >(undefined);
+  const [transcriptionvalue, settranscriptionvalue] = useState<string | undefined>(undefined);
   const [body, setBody] = useState<string | undefined>(undefined);
+  const [objectives, setObjective] = useState<string | undefined>(undefined);
+  const [recommendations, setRecommendations] = useState<string | undefined>(undefined);
+  
   const userContext = useUserContext();
+  
 
   useEffect(() => {
     const setRoot = async () => {
@@ -44,9 +44,12 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
         setTitle(response.title);
         setCreatedOn(response.createdOn);
         settranscriptionvalue(response.transcript);
-        const bodyContent = response.extensions.find(ext => ext.identifier === "body")?.content?.text ?? " ";
+        const bodyContent = response.extensions.find(ext => ext.identifier === "body")?.content?.text ?? undefined;
         setBody(bodyContent as string);
-        
+        const objectiveContent = response.extensions.find(ext => ext.identifier === "objective")?.content?.text ?? undefined;
+        setObjective(objectiveContent as string);
+        const recommendationsContent = response.extensions.find(ext => ext.identifier === "recommendations")?.content?.text ?? undefined;
+        setRecommendations(recommendationsContent as string);
       })
       .catch((error) => {
         console.error(error);
@@ -58,27 +61,6 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
       getEntryDetails();
     }
   }, [getEntryDetails, id]);
-
-  const recommendedReadings = [
-    "React Official Documentation",
-    "Thinking in React",
-    "React Patterns",
-  ];
-
-  const readingURLs = [
-    "https://reactjs.org/docs/getting-started.html",
-    "https://reactjs.org/docs/thinking-in-react.html",
-    "https://reactpatterns.com/",
-  ];
-
-  const recommendationsProps: RecommendationsProps = {
-    recommendationsList: recommendedReadings,
-    recommendationsURL: readingURLs,
-  };
-
-  const objectiveProps: ObjectiveProps = {
-    objectiveList: ["Objective 1", "Objective 2", "Objective 3"],
-  };
 
   return (
     <CssVarsProvider disableTransitionOnChange>
@@ -133,8 +115,8 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
             </Box>
             <Box sx={{ gridRow: "span 3", display: { xs: "2", md: "2" } }}>
               <RightTab
-                recommendationsProps={recommendationsProps}
-                objectiveProps={objectiveProps}
+                recommendationsProps={recommendations}
+                objectiveProps={objectives}
               />
             </Box>
           </Box>
@@ -146,7 +128,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
             }}
             height={"40%"}
           >
-            <Body transcription={transcriptionvalue} body={body} />
+            <Body transcription={transcriptionvalue} body={body} id={id} />
           </Box>
         </Box>
       </Box>

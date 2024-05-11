@@ -1,14 +1,14 @@
-import React from "react";
-import Tabs from "@mui/joy/Tabs";
-import TabList from "@mui/joy/TabList";
+import { Button } from "@mui/joy";
 import Tab from "@mui/joy/Tab";
-import TabPanel from "@mui/joy/TabPanel"; // Import TabPanel
-import Objective, { ObjectiveProps } from "../extensions/objective";
-import Recommendations, { RecommendationsProps } from "../extensions/recommendations";
+import TabList from "@mui/joy/TabList";
+import TabPanel from "@mui/joy/TabPanel";
+import Tabs from "@mui/joy/Tabs";
+import React from "react";
+import MDEditor from "@uiw/react-md-editor";
 
 interface RightTabProps {
-  objectiveProps?: ObjectiveProps;
-  recommendationsProps?: RecommendationsProps;
+  objectiveProps?: string;
+  recommendationsProps?: string;
 }
 
 const RightTab: React.FC<RightTabProps> = ({
@@ -22,7 +22,30 @@ const RightTab: React.FC<RightTabProps> = ({
     tabs.push(<Tab key="Objective">Objective</Tab>);
     tabPanels.push(
       <TabPanel key="ObjectivePanel" value={tabs.length - 1}>
-        <Objective {...objectiveProps} />
+        <MDEditor.Markdown
+          source={objectiveProps}
+          style={{
+            backgroundColor: "transparent",
+          }}
+        />
+      </TabPanel>
+    );
+  } else {
+    tabs.push(<Tab key="Objective">Objective</Tab>);
+    tabPanels.push(
+      <TabPanel key="Objective" value={tabs.length - 1}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <Button variant="outlined" color="neutral">
+            Generate Objective
+          </Button>
+        </div>
       </TabPanel>
     );
   }
@@ -31,7 +54,30 @@ const RightTab: React.FC<RightTabProps> = ({
     tabs.push(<Tab key="Recommendations">Recommendations</Tab>);
     tabPanels.push(
       <TabPanel key="RecommendationsPanel" value={tabs.length - 1}>
-        <Recommendations {...recommendationsProps} />
+        <MDEditor.Markdown
+          source={recommendationsProps}
+          style={{
+            backgroundColor: "transparent",
+          }}
+        />
+      </TabPanel>
+    );
+  } else {
+    tabs.push(<Tab key="Recommendations">Recommendations</Tab>);
+    tabPanels.push(
+      <TabPanel key="Recommendations" value={tabs.length - 1}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <Button variant="outlined" color="neutral">
+            Generate Recommendations
+          </Button>
+        </div>
       </TabPanel>
     );
   }

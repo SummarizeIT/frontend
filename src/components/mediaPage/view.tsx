@@ -22,6 +22,9 @@ interface MediaPageProps {
 const MediaPage: React.FC<MediaPageProps> = ({}) => {
   const { id } = useParams<{ id: string }>();
   const [url, setUrl] = useState<string | null>(null);
+  const [entrytitle, setTitle] = useState<string | null>(null);
+  const [createdOn, setCreatedOn] = useState<string | null>(null);
+
   const userContext = useUserContext();
 
   useEffect(() => {
@@ -36,8 +39,9 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
     if (!id) return;
     EntryService.getEntryById({ id: id })
       .then((response) => {
-        console.log(response);
         setUrl(response.url);
+        setTitle(response.title);
+        setCreatedOn(response.createdOn);
       })
       .catch((error) => {
         console.error(error);
@@ -99,7 +103,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
               display: { xs: "2", md: "2" },
             }}
           >
-            <Top />
+            <Top title={entrytitle} createdOn={createdOn} />
           </Box>
           {/* player */}
           <Box

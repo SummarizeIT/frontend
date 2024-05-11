@@ -156,7 +156,8 @@ export type UpdateEntryRequest = {
    * Title of the entry
    */
   title: string;
-  extensions?: Array<Extension>;
+  extensions: Array<Extension>;
+  isPublic: boolean; 
 };
 
 /**
@@ -659,6 +660,7 @@ export type EntryResponse = {
   /**
    * Body content of the entry
    */
+  isPublic: boolean;
   body: string;
   extensions: Array<Extension>;
   /**
@@ -669,6 +671,10 @@ export type EntryResponse = {
    * URL of the vtt subtitles
    */
   url: string;
+  /**
+   * Transcription of the entry
+   */
+  transcript: string;
   processing?: boolean;
 };
 

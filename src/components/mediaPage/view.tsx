@@ -1,22 +1,21 @@
 import { EntryService } from "@/client";
+import Body from "@/components/mediaPage/parts/body";
+import Top from "@/components/mediaPage/parts/top.tsx";
 import { useUserContext } from "@/utils/user/user-context";
 import Box from "@mui/joy/Box";
 import CssBaseline from "@mui/joy/CssBaseline";
 import { CssVarsProvider } from "@mui/joy/styles";
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import MediaPlayer from "./parts/mediaPlayer";
 import { ObjectiveProps } from "./extensions/objective";
 import { RecommendationsProps } from "./extensions/recommendations";
+import MediaPlayer from "./parts/mediaPlayer";
 import RightTab from "./parts/rightTab";
-import Body from "@/components/mediaPage/parts/body";
-import Top from "@/components/mediaPage/parts/top.tsx";
 interface MediaPageProps {
   mediaUrl?: string;
   objectiveProps?: ObjectiveProps;
   recommendationsProps?: RecommendationsProps;
-  transcription?: string;
-  description?: string;
+  body?: string;
 }
 
 const MediaPage: React.FC<MediaPageProps> = ({}) => {
@@ -24,11 +23,13 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
   const [url, setUrl] = useState<string | null>(null);
   const [entrytitle, setTitle] = useState<string | null>(null);
   const [createdOn, setCreatedOn] = useState<string | null>(null);
-
+  const [transcriptionvalue, settranscriptionvalue] = useState<
+    string | undefined
+  >(undefined);
+  const [body, setBody] = useState<string | undefined>(undefined);
   const userContext = useUserContext();
 
   useEffect(() => {
-    console.log("In folder Viewer ", userContext);
     const setRoot = async () => {
       const user = await userContext?.getUser();
     };
@@ -42,6 +43,9 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
         setUrl(response.url);
         setTitle(response.title);
         setCreatedOn(response.createdOn);
+        settranscriptionvalue(response.transcript);
+
+      
       })
       .catch((error) => {
         console.error(error);
@@ -138,13 +142,10 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
             sx={{
               gridRow: "span 3",
               display: { xs: "2", md: "2" },
-              minHeight: "25%",
             }}
+            height={"40%"}
           >
-            <Body
-              recommendationsProps={recommendationsProps}
-              objectiveProps={objectiveProps}
-            />
+            <Body transcription={transcriptionvalue} body={body} />
           </Box>
         </Box>
       </Box>

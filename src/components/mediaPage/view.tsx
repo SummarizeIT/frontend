@@ -92,7 +92,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
               display: { xs: "2", md: "2" },
             }}
           >
-            <Top title={entrytitle} createdOn={createdOn} id={id} />
+            <Top title={entrytitle} createdOn={createdOn} id={id!} />
           </Box>
           {/* player */}
           <Box

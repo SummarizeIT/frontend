@@ -263,9 +263,11 @@ export const FolderViewer = () => {
         console.log("Response", response);
         const title: string = name;
         const extensions: Array<Extension> = response.extensions;
+        const isPublic: boolean = response.isPublic;
         EntryService.updateEntry({
           id: fileId,
-          requestBody: { title, extensions },
+          requestBody: { title, extensions ,isPublic}
+          ,
         }).then((response) => {
           fetchFolderDetails(currentFolderID!);
         });

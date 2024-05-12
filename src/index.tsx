@@ -21,6 +21,7 @@ import SignInPage from "./pages/auth/signIn.tsx";
 import SignUpPage from "./pages/auth/signUp.tsx";
 import "./styles/index.css";
 import { UserProvider } from './utils/user/user-context';
+import EditMedia from "./pages/Media/editMedia.tsx";
 const refresh = createRefresh({
   interval: 10,
   refreshApiCallback: async (param) => {
@@ -74,6 +75,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               <Route path="/settings/profile" element={<ProfileSettings />} />
               <Route path="/settings/notifications" element={<NotificationsSettings />} />
               <Route path="/view/:id" element={<Mediaview />} />
+              <Route path="/edit/:id" element={<EditMedia />} />
             </Route>
 
           </Routes>

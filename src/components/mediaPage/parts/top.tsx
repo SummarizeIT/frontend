@@ -1,5 +1,10 @@
+<<<<<<< Updated upstream
+=======
+import React, { useState } from "react";
+>>>>>>> Stashed changes
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
+<<<<<<< Updated upstream
 import Dropdown from "@mui/joy/Dropdown";
 import IconButton from "@mui/joy/IconButton";
 import Menu from "@mui/joy/Menu";
@@ -13,11 +18,18 @@ import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import ShareRoundedIcon from '@mui/icons-material/ShareRounded';
 import { useUserContext } from "@/utils/user/user-context";
 import { EntryService } from "@/client";
+=======
+import InfoModal from "@/components/modal/InfoModal";
+>>>>>>> Stashed changes
 
 interface TopProps {
   title: string | null;
   createdOn: string | null;
+<<<<<<< Updated upstream
   id?: string;
+=======
+  id: string;
+>>>>>>> Stashed changes
 }
 
 const formatDate = (dateString: string | null): string | null => {
@@ -35,6 +47,7 @@ const formatDate = (dateString: string | null): string | null => {
     .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 };
 
+<<<<<<< Updated upstream
 const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
   const navigate = useNavigate();
   const userContext = useUserContext();
@@ -55,6 +68,23 @@ const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
     EntryService.updateEntry
   };
   
+=======
+const Top: React.FC<TopProps> = ({ title, createdOn, id}) => {
+  const navigate = useNavigate();
+  const [titleMessage, setTitleMessage] = useState<string|null>(null);
+  const [infoMessage, setInfoMessage] = useState<string|null>(null);
+  const [open, setOpen] = useState<boolean>(false);
+
+  const handleEdit = () => {
+    console.log("Edit clicked");
+    if (!id){
+      setTitleMessage("Error");
+      setInfoMessage("No ID found");
+      return;
+    }
+    navigate(`/edit/${id}`);
+  };
+>>>>>>> Stashed changes
 
   return (
     <Tabs>
@@ -79,7 +109,7 @@ const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
           {title} {formatDate(createdOn)}
         </div>
         <div>
-          <IconButton>
+          <IconButton onClick={handleEdit}>
             <EditRoundedIcon />
           </IconButton>
           <Dropdown>
@@ -110,6 +140,7 @@ const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
             </Menu>
           </Dropdown>
         </div>
+        <InfoModal infoTitle={titleMessage!} infoMessage={infoMessage!} open={open} onClose={()=>setOpen(false)} />
       </div>
     </Tabs>
   );

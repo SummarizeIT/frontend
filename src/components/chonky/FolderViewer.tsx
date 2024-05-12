@@ -209,7 +209,7 @@ export const FolderViewer = () => {
       FolderService.createFolder({
         requestBody: { name: folderName, parentId: currentFolderID! },
       })
-        .then((response) => {
+        .then(() => {
           fetchFolderDetails(currentFolderID!);
         })
         .catch((error) => console.error("Error creating folder:", error));
@@ -223,7 +223,7 @@ export const FolderViewer = () => {
         return;
       }
       FolderService.deleteFolder({ id: folderId })
-        .then((response) => {
+        .then(() => {
           fetchFolderDetails(currentFolderID!);
         })
         .catch((error) => console.error("Error deleting folder:", error));
@@ -249,7 +249,7 @@ export const FolderViewer = () => {
   const renameFolder = useCallback(
     async (folderId: string, name: string) => {
       FolderService.updateFolder({ id: folderId, requestBody: { name: name } })
-        .then((response) => {
+        .then(() => {
           fetchFolderDetails(currentFolderID!);
         })
         .catch((error) => console.error("Error renaming folder:", error));
@@ -263,10 +263,11 @@ export const FolderViewer = () => {
         console.log("Response", response);
         const title: string = name;
         const extensions: Array<Extension> = response.extensions;
+        const isPublic: boolean = response.isPublic;
         EntryService.updateEntry({
           id: fileId,
-          requestBody: { title, extensions },
-        }).then((response) => {
+          requestBody: { title, extensions, isPublic },
+        }).then(() => {
           fetchFolderDetails(currentFolderID!);
         });
       });
@@ -281,7 +282,7 @@ export const FolderViewer = () => {
         requestBody: { destinationFolderId: destinationId },
         id: sourceId,
       })
-        .then((response) => {
+        .then(() => {
           fetchFolderDetails(currentFolderID!);
         })
         .catch((error) => console.error("Error moving folder:", error));
@@ -292,7 +293,7 @@ export const FolderViewer = () => {
   const deleteFile = useCallback(
     async (fileId: string) => {
       EntryService.deleteEntry({ id: fileId })
-        .then((response) => {
+        .then(() => {
           fetchFolderDetails(currentFolderID!);
         })
         .catch((error) => console.error("Error deleting file:", error));
@@ -306,7 +307,7 @@ export const FolderViewer = () => {
         requestBody: { destinationFolderId: destinationId },
         id: sourceId,
       })
-        .then((response) => {
+        .then(() => {
           fetchFolderDetails(currentFolderID!);
         })
         .catch((error) => console.error("Error moving file:", error));

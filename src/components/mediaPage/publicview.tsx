@@ -4,7 +4,7 @@ import Stack from '@mui/joy/Stack';
 import { CssVarsProvider } from '@mui/joy/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import MediaPlayer from './parts/mediaPlayer';
+import MediaPlayer from './utils/mediaPlayer';
 
 import { EntryService } from '@/client';
 import NavBar from '@/components/fileview/components/NavBar';
@@ -42,7 +42,7 @@ const PublicView: React.FC<MediaPageProps> = ({
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
-      <NavBar/>
+      <NavBar />
       <Box component="main" sx={{ height: 'calc(100vh - 55px)', display: 'grid', gridTemplateColumns: { xs: 'auto', md: '60% 40%' }, gridTemplateRows: 'auto 1fr auto', }}>
       </Box>
     </CssVarsProvider>

@@ -6,18 +6,19 @@ import Menu from "@mui/joy/Menu";
 import MenuButton from "@mui/joy/MenuButton";
 import MenuItem from "@mui/joy/MenuItem";
 import Tabs from "@mui/joy/Tabs";
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import ShareRoundedIcon from '@mui/icons-material/ShareRounded';
-import { useUserContext } from "@/utils/user/user-context";
 import { EntryService } from "@/client";
 
 interface TopProps {
   title: string | null;
   createdOn: string | null;
   id?: string;
+  toggleEditMode: () => void;
+  editMode: boolean;
 }
 
 const formatDate = (dateString: string | null): string | null => {
@@ -27,25 +28,16 @@ const formatDate = (dateString: string | null): string | null => {
   return `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1)
     .toString()
     .padStart(2, "0")}-${date
-    .getFullYear()
-    .toString()
-    .slice(-2)} at ${date
-    .getHours()
-    .toString()
-    .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+      .getFullYear()
+      .toString()
+      .slice(-2)} at ${date
+        .getHours()
+        .toString()
+        .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 };
 
-const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
+const Top: React.FC<TopProps> = ({ title, createdOn, id, toggleEditMode, editMode }) => {
   const navigate = useNavigate();
-  const userContext = useUserContext();
-  
-
-  useEffect(() => {
-    const setRoot = async () => {
-      const user = await userContext?.getUser();
-    };
-    setRoot();
-  }, []);
 
   const handleCopyLink = () => {
     if (!id) return;
@@ -54,7 +46,7 @@ const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
     navigator.clipboard.writeText(baseUrlWithPublicView);
     EntryService.updateEntry
   };
-  
+
 
   return (
     <Tabs>
@@ -79,13 +71,13 @@ const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
           {title} {formatDate(createdOn)}
         </div>
         <div>
-          <IconButton>
+          <IconButton onClick={() => toggleEditMode()} color={editMode ? 'primary' : 'neutral'}>
             <EditRoundedIcon />
           </IconButton>
           <Dropdown>
             <MenuButton
               sx={{
-                border: 'none' 
+                border: 'none'
               }}
             >
               <ShareRoundedIcon />
@@ -100,9 +92,9 @@ const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
                 "--ListItem-radius": "var(--joy-radius-sm)",
               }}
             >
-            
+
               <MenuItem
-              onClick={handleCopyLink}
+                onClick={handleCopyLink}
               >
                 Copy Link
                 <ContentCopyRoundedIcon />

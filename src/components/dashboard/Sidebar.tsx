@@ -17,7 +17,7 @@ import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
 import * as React from "react";
 
-import { MeResponse } from "@/client";
+import { AuthService, MeResponse } from "@/client";
 import { LogoIcon } from "@/components/Icons";
 import { closeSidebar } from "@/lib/DashboardUtils";
 import { useUserContext } from "@/utils/user/user-context";
@@ -239,8 +239,8 @@ export default function Sidebar() {
           variant="plain"
           color="neutral"
           onClick={() => {
-            signOut();
-            navigate("/signin");
+            AuthService.logout();
+            userContext.resetUser();
           }}
         >
           <LogoutRoundedIcon />

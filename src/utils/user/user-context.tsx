@@ -8,6 +8,7 @@ import { OpenAPI } from "@/client";
 
 interface UserContextType {
   getUser: () => Promise<MeResponse | null>;
+  resetUser: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType>(null!);
@@ -30,22 +31,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       setUser(currentUser);
     } catch (err) {
       console.log("Failed to get user info, logging out..", err);
-      signOut();
-      navigate("/signin");
+      resetUser();
     }
     return currentUser;
   };
-  /*
-  useEffect(() => {
-    console.log("User Provider remounted!!")
-    if(isAuthenticated){
-        console.log(authHeader!.substring(7))
-        OpenAPI.TOKEN = authHeader!.substring(7);
-    }
-  }, [])
-*/
+
+  const resetUser = async () => {
+    setUser(null);
+    signOut();
+    navigate("/signin");
+  }
+
   return (
-    <UserContext.Provider value={{ getUser }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ getUser, resetUser }}>{children}</UserContext.Provider>
   );
 };
 

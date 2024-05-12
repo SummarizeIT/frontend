@@ -32,7 +32,7 @@ export default function ProfileSettings() {
                         gap: 1,
                     }}
                 >
-                    <Typography level="h2" component="h1" sx={{ mb: 3 }}>
+                    <Typography level="h4" sx={{ mb: 3 }}>
                         Notifications
                     </Typography>
                 </Box>

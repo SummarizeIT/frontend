@@ -156,11 +156,8 @@ export type UpdateEntryRequest = {
    * Title of the entry
    */
   title: string;
-  /**
-   * Body content of the entry
-   */
-  body: string;
-  extensions?: Array<Extension>;
+  extensions: Array<Extension>;
+  isPublic: boolean; 
 };
 
 /**
@@ -257,6 +254,24 @@ export type UploadEntryRequest = {
    * Lastname of the user
    */
   title: string;
+};
+
+/**
+ * Extension action request
+ */
+export type ExtensionRequest = {
+  /**
+   * Extension identifier
+   */
+  identifier?: string;
+  /**
+   * Extension command
+   */
+  command?: string;
+  /**
+   * Extension payload
+   */
+  payload?: string;
 };
 
 /**
@@ -583,6 +598,10 @@ export type DirectoryBreadcrumbsResponse = {
    * Name of the directory
    */
   name: string;
+  /**
+   * Indicates if the directory is a directory
+   */
+  isDir: boolean;
 };
 
 /**
@@ -641,6 +660,7 @@ export type EntryResponse = {
   /**
    * Body content of the entry
    */
+  isPublic: boolean;
   body: string;
   extensions: Array<Extension>;
   /**
@@ -648,10 +668,14 @@ export type EntryResponse = {
    */
   mediaType: string;
   /**
-   * URL of the media
+   * URL of the vtt subtitles
    */
   url: string;
-  processing?: boolean;
+  /**
+   * Transcription of the entry
+   */
+  transcript: string;
+  processing: boolean;
 };
 
 /**
@@ -1677,6 +1701,39 @@ export type $OpenApiTs = {
          * Full authentication is required to access this resource
          */
         401: ErrorResponse;
+        /**
+         * Validation Failed
+         */
+        422: DetailedErrorResponse;
+      };
+    };
+  };
+  '/entry/{id}/extension': {
+    post: {
+      req: {
+        /**
+         * ID of entry to update
+         */
+        id: string;
+        requestBody: ExtensionRequest;
+      };
+      res: {
+        /**
+         * Success operation
+         */
+        200: unknown;
+        /**
+         * Bad request
+         */
+        400: ErrorResponse;
+        /**
+         * Full authentication is required to access this resource
+         */
+        401: ErrorResponse;
+        /**
+         * Not Found
+         */
+        404: ErrorResponse;
         /**
          * Validation Failed
          */

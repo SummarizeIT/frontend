@@ -5,7 +5,6 @@ import { CssVarsProvider } from '@mui/joy/styles';
 
 import Header from '@/components/dashboard/Header';
 import Sidebar from '@/components/dashboard/Sidebar';
-import { FolderViewer } from '@/components/chonky/FolderViewer';
 import '../styles/chonky.css'
 export default function JoyOrderDashboardTemplate() {
   return (
@@ -49,7 +48,7 @@ export default function JoyOrderDashboardTemplate() {
             }}
           >
             <div style={{ width: '100%' }}>
-            <FolderViewer/>
+              <Typography level="h4">This is main page of the Dashboard</Typography>
             </div>
               
             

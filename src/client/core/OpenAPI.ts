@@ -40,7 +40,7 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-  BASE: 'https://104.248.45.73:8080',
+  BASE: 'http://localhost:8010/proxy',
   CREDENTIALS: 'include',
   ENCODE_PATH: undefined,
   HEADERS: undefined,

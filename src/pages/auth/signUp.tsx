@@ -17,8 +17,8 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { LogoIcon } from "../../components/Icons";
 import loginImg from "../../assets/loginimg.png";
 import { useNavigate ,Link as RouterLink } from "react-router-dom";
-import { useAuth } from "@/utils/auth/auth-context";
-import { RegisterRequest} from '@/client';
+import { AuthService, RegisterRequest} from '@/client';
+import InfoModal from "@/components/modal/InfoModal";
 
 interface FormElements extends HTMLFormControlsCollection {
   firstName: HTMLInputElement;
@@ -58,8 +58,10 @@ function ColorSchemeToggle(props: IconButtonProps) {
 export default function SignUpPage() {
   const [showPassword] = React.useState(false);
   const [showConfirmPassword] = React.useState(false);
+  const [InfoModalOpen, setInfoModalOpen] = React.useState(false);
+  const [infoMessage, setInfoMessage] = React.useState("");
+  const [infoTitle, setInfoTitle] = React.useState("");
   const navigate = useNavigate();
-  const auth = useAuth();
   
   const handleregister = async (event: React.FormEvent<SignUnFormElement>) => {
     event.preventDefault();
@@ -74,26 +76,27 @@ export default function SignUpPage() {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(registerData.password)) {
-      alert(
-        "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character."
-      );
+      setInfoMessage("Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+      setInfoTitle("Error");
+      setInfoModalOpen(true);
       return;
     }
 
     if (registerData.password !== registerData.passwordConfirm) {
-      alert("Passwords do not match.");
+      setInfoMessage("Passwords do not match");
+      setInfoTitle("Error");
+      setInfoModalOpen(true);
       return;
     }
 
-    try {
-      await auth.register(registerData);
-    } catch (error) {
-      console.error("Registration error:", error);
-    }
+    AuthService.register({requestBody: registerData}).then(() => {
+      navigate("/signin")
+    }).catch(err => console.log(err))
   };
 
   return (
     <CssVarsProvider defaultMode="system" disableTransitionOnChange>
+      <InfoModal infoMessage={infoMessage} infoTitle={infoTitle} open={InfoModalOpen} onClose={() => setInfoModalOpen(false)} />
       <CssBaseline />
       <GlobalStyles
         styles={{

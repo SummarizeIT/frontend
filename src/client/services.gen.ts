@@ -909,14 +909,42 @@ export class EntryService {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/entry',
-      query: {
-        uploadRequest: data.uploadRequest,
-      },
+      query: data.uploadRequest,
       formData: data.formData,
       mediaType: 'multipart/form-data',
       errors: {
         400: 'Bad request',
         401: 'Full authentication is required to access this resource',
+        422: 'Validation Failed',
+      },
+    });
+  }
+
+  /**
+   * Run an extension action
+   * @param data The data for the request.
+   * @param data.id ID of entry to update
+   * @param data.requestBody
+   * @returns unknown Success operation
+   * @throws ApiError
+   */
+  public static extensionPayload(
+    data: $OpenApiTs['/entry/{id}/extension']['post']['req'],
+  ): CancelablePromise<
+    $OpenApiTs['/entry/{id}/extension']['post']['res'][200]
+  > {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/entry/{id}/extension',
+      path: {
+        id: data.id,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+      errors: {
+        400: 'Bad request',
+        401: 'Full authentication is required to access this resource',
+        404: 'Not Found',
         422: 'Validation Failed',
       },
     });

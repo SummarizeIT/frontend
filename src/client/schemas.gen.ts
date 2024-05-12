@@ -273,7 +273,7 @@ export const $Extension = {
 } as const;
 
 export const $UpdateEntryRequest = {
-  required: ['body', 'title'],
+  required: ['title'],
   type: 'object',
   properties: {
     title: {
@@ -282,13 +282,6 @@ export const $UpdateEntryRequest = {
       type: 'string',
       description: 'Title of the entry',
       example: 'Sample Title',
-    },
-    body: {
-      maxLength: 10000,
-      minLength: 0,
-      type: 'string',
-      description: 'Body content of the entry',
-      example: 'Sample body content.',
     },
     extensions: {
       type: 'array',
@@ -474,6 +467,28 @@ export const $UploadEntryRequest = {
       example: 'DOE',
     },
   },
+} as const;
+
+export const $ExtensionRequest = {
+  type: 'object',
+  properties: {
+    identifier: {
+      type: 'string',
+      description: 'Extension identifier',
+      example: 'body',
+    },
+    command: {
+      type: 'string',
+      description: 'Extension command',
+      example: 'generate',
+    },
+    payload: {
+      type: 'string',
+      description: 'Extension payload',
+      example: 'body',
+    },
+  },
+  description: 'Extension action request',
 } as const;
 
 export const $PasswordRequest = {
@@ -1023,7 +1038,7 @@ export const $Audio = {
 } as const;
 
 export const $DirectoryBreadcrumbsResponse = {
-  required: ['id', 'name'],
+  required: ['id', 'isDir', 'name'],
   type: 'object',
   properties: {
     id: {
@@ -1035,6 +1050,10 @@ export const $DirectoryBreadcrumbsResponse = {
       type: 'string',
       description: 'Name of the directory',
       example: 'CS',
+    },
+    isDir: {
+      type: 'boolean',
+      description: 'Indicates if the directory is a directory',
     },
   },
 } as const;
@@ -1152,7 +1171,7 @@ export const $EntryResponse = {
     },
     url: {
       type: 'string',
-      description: 'URL of the media',
+      description: 'URL of the vtt subtitles',
     },
     processing: {
       type: 'boolean',

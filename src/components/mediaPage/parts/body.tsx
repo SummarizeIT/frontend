@@ -6,17 +6,18 @@ import TabList from "@mui/joy/TabList";
 import TabPanel from "@mui/joy/TabPanel";
 import Tabs from "@mui/joy/Tabs";
 import MDEditor from "@uiw/react-md-editor";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 interface bodyProps {
   transcription?: string;
   body?: string;
   id?: string;
+  loading: boolean;
 }
 
-const body: React.FC<bodyProps> = ({ body, transcription,id }) => {
+const body: React.FC<bodyProps> = ({ body, transcription, id, loading }) => {
   const userContext = useUserContext();
-  
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     const setRoot = async () => {
@@ -26,18 +27,24 @@ const body: React.FC<bodyProps> = ({ body, transcription,id }) => {
   }, []);
 
   const handleGenerateSummarization = () => {
-    if (!id) return;
-    // Generate Summarization
-    EntryService.extensionPayload({id:id, requestBody:{identifier:"body",  command: "generate"}}).then((response) => {
-      console.log("handleGenerateSummarization");
+    if (loading) {
+      alert("You can't generate summary until transcription ends.");
+      return;
     }
-    ).catch((error) => {
-      console.error(error);
-    });
-
-
-  }
-
+    if (!id) return;
+    setIsGenerating(true);
+    EntryService.extensionPayload({
+      id: id,
+      requestBody: { identifier: "body", command: "generate" },
+    })
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsGenerating(false);
+      });
+  };
 
   const tabs = [];
   const tabPanels = [];
@@ -56,7 +63,7 @@ const body: React.FC<bodyProps> = ({ body, transcription,id }) => {
         />
       </TabPanel>
     );
-  }else{
+  } else {
     tabs.push(<Tab key="Transcription">Transcription</Tab>);
     tabPanels.push(
       <TabPanel key="Transcription" value={0}>
@@ -68,7 +75,7 @@ const body: React.FC<bodyProps> = ({ body, transcription,id }) => {
             height: "100%",
           }}
         >
-          <LinearProgress variant="outlined" color="neutral"/>
+          <LinearProgress variant="outlined" color="neutral" />
         </div>
       </TabPanel>
     );
@@ -97,9 +104,17 @@ const body: React.FC<bodyProps> = ({ body, transcription,id }) => {
             height: "100%",
           }}
         >
-          <Button variant="outlined" color="neutral" onClick={handleGenerateSummarization} id="generatesummarization">
-            Generate Summarization
-          </Button>
+          {isGenerating ? (
+            <LinearProgress variant="outlined" color="neutral" />
+          ) : (
+            <Button
+              variant="outlined"
+              color="neutral"
+              onClick={handleGenerateSummarization}
+            >
+              Generate Summarization
+            </Button>
+          )}
         </div>
       </TabPanel>
     );

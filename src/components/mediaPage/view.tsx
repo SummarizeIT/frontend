@@ -25,6 +25,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
   const [body, setBody] = useState<string | undefined>(undefined);
   const [objectives, setObjective] = useState<string | undefined>(undefined);
   const [recommendations, setRecommendations] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState<boolean>(false);
   
   const userContext = useUserContext();
   
@@ -50,6 +51,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
         setObjective(objectiveContent as string);
         const recommendationsContent = response.extensions.find(ext => ext.identifier === "recommendations")?.content?.text ?? undefined;
         setRecommendations(recommendationsContent as string);
+        setLoading(response.processing);
       })
       .catch((error) => {
         console.error(error);
@@ -90,7 +92,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
               display: { xs: "2", md: "2" },
             }}
           >
-            <Top title={entrytitle} createdOn={createdOn} />
+            <Top title={entrytitle} createdOn={createdOn} id={id} />
           </Box>
           {/* player */}
           <Box
@@ -128,7 +130,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
             }}
             height={"40%"}
           >
-            <Body transcription={transcriptionvalue} body={body} id={id} />
+            <Body transcription={transcriptionvalue} body={body} id={id} loading={loading} />
           </Box>
         </Box>
       </Box>

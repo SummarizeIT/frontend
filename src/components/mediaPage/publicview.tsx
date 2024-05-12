@@ -5,15 +5,11 @@ import { CssVarsProvider } from '@mui/joy/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MediaPlayer from './parts/mediaPlayer';
-import { ObjectiveProps } from './extensions/objective';
-import { RecommendationsProps } from './extensions/recommendations';
-import RightTab from './parts/rightTab';
+
 import { EntryService } from '@/client';
-import NavBar from '@/components/fileview/components/NavBar'
+import NavBar from '@/components/fileview/components/NavBar';
 interface MediaPageProps {
   mediaUrl?: string;
-  objectiveProps?: ObjectiveProps;
-  recommendationsProps?: RecommendationsProps;
   transcription?: string;
   description?: string;
 }
@@ -42,31 +38,12 @@ const PublicView: React.FC<MediaPageProps> = ({
       getEntryDetails();
     }
   }, [getEntryDetails, id]);
-  const recommendedReadings = [
-    "React Official Documentation",
-    "Thinking in React",
-    "React Patterns"
-  ];
-
-  const readingURLs = [
-    "https://reactjs.org/docs/getting-started.html",
-    "https://reactjs.org/docs/thinking-in-react.html",
-    "https://reactpatterns.com/"
-  ];
-
-
-  const recommendationsProps: RecommendationsProps = { recommendationsList: recommendedReadings, recommendationsURL: readingURLs };
-
-  const objectiveProps: ObjectiveProps = { objectiveList: ["Objective 1", "Objective 2", "Objective 3"] };
 
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
       <NavBar/>
       <Box component="main" sx={{ height: 'calc(100vh - 55px)', display: 'grid', gridTemplateColumns: { xs: 'auto', md: '60% 40%' }, gridTemplateRows: 'auto 1fr auto', }}>
-        <Stack sx={{ backgroundColor: 'background.surface', px: { xs: 2, md: 4 }, py: 2, borderBottom: '1px solid', borderColor: 'divider', }}><MediaPlayer url={url!} /></Stack>
-        <Box sx={{ gridRow: 'span 3', display: { xs: 'none', md: 'flex' }, }}><RightTab recommendationsProps={recommendationsProps} objectiveProps={objectiveProps} /></Box>
-        <Stack spacing={2} sx={{ px: { xs: 2, md: 4 }, pt: 2, minHeight: 0 }}>Bottom</Stack>
       </Box>
     </CssVarsProvider>
   );

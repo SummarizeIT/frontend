@@ -18,6 +18,13 @@ const RightTab: React.FC<RightTabProps> = ({
   const tabs = [];
   const tabPanels = [];
 
+  const handleGenerateObjective = () => {
+    alert("Generate Objective");
+  };
+  const handleGenerateRecommendations = () => {
+    alert("Generate Recommendations");
+  }
+
   if (objectiveProps) {
     tabs.push(<Tab key="Objective">Objective</Tab>);
     tabPanels.push(
@@ -42,7 +49,11 @@ const RightTab: React.FC<RightTabProps> = ({
             height: "100%",
           }}
         >
-          <Button variant="outlined" color="neutral">
+          <Button
+            variant="outlined"
+            color="neutral"
+            onClick={handleGenerateObjective}
+          >
             Generate Objective
           </Button>
         </div>
@@ -74,7 +85,11 @@ const RightTab: React.FC<RightTabProps> = ({
             height: "100%",
           }}
         >
-          <Button variant="outlined" color="neutral">
+          <Button
+            variant="outlined"
+            color="neutral"
+            onClick={handleGenerateRecommendations}
+          >
             Generate Recommendations
           </Button>
         </div>

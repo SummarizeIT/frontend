@@ -675,7 +675,7 @@ export type EntryResponse = {
    * Transcription of the entry
    */
   transcript: string;
-  processing?: boolean;
+  processing: boolean;
 };
 
 /**

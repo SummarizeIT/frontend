@@ -1,14 +1,23 @@
-import React from "react";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
-import IconButton from "@mui/joy/IconButton";
-import Tabs from "@mui/joy/Tabs";
-import { useNavigate } from "react-router-dom";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import Dropdown from "@mui/joy/Dropdown";
+import IconButton from "@mui/joy/IconButton";
+import Menu from "@mui/joy/Menu";
+import MenuButton from "@mui/joy/MenuButton";
+import MenuItem from "@mui/joy/MenuItem";
+import Tabs from "@mui/joy/Tabs";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
+import ShareRoundedIcon from '@mui/icons-material/ShareRounded';
+import { useUserContext } from "@/utils/user/user-context";
+import { EntryService } from "@/client";
 
 interface TopProps {
   title: string | null;
   createdOn: string | null;
+  id?: string;
 }
 
 const formatDate = (dateString: string | null): string | null => {
@@ -26,8 +35,26 @@ const formatDate = (dateString: string | null): string | null => {
     .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 };
 
-const Top: React.FC<TopProps> = ({ title, createdOn }) => {
+const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
   const navigate = useNavigate();
+  const userContext = useUserContext();
+  
+
+  useEffect(() => {
+    const setRoot = async () => {
+      const user = await userContext?.getUser();
+    };
+    setRoot();
+  }, []);
+
+  const handleCopyLink = () => {
+    if (!id) return;
+    const currentUrl = new URL(window.location.href);
+    const baseUrlWithPublicView = `${currentUrl.protocol}//${currentUrl.host}/publicview/${id}`;
+    navigator.clipboard.writeText(baseUrlWithPublicView);
+    EntryService.updateEntry
+  };
+  
 
   return (
     <Tabs>
@@ -55,9 +82,33 @@ const Top: React.FC<TopProps> = ({ title, createdOn }) => {
           <IconButton>
             <EditRoundedIcon />
           </IconButton>
-          <IconButton>
-            <ShareRoundedIcon />
-          </IconButton>
+          <Dropdown>
+            <MenuButton
+              sx={{
+                border: 'none' 
+              }}
+            >
+              <ShareRoundedIcon />
+            </MenuButton>
+            <Menu
+              placement="bottom-end"
+              size="sm"
+              sx={{
+                zIndex: "99999",
+                p: 1,
+                gap: 1,
+                "--ListItem-radius": "var(--joy-radius-sm)",
+              }}
+            >
+            
+              <MenuItem
+              onClick={handleCopyLink}
+              >
+                Copy Link
+                <ContentCopyRoundedIcon />
+              </MenuItem>
+            </Menu>
+          </Dropdown>
         </div>
       </div>
     </Tabs>

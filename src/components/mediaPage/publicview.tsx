@@ -22,6 +22,8 @@ const PublicView: React.FC<MediaPageProps> = ({}) => {
   const [url, setUrl] = useState<string | null>(null);
   const [transcription, setTranscription] = useState<string | null>(null);
   const [summarization, setSummarization] = useState<string | null>(null);
+  const [objectiveContent, setObjectiveContent] = useState<string | null>(null);
+  const [recommendationsContent, setRecommendationsContent] = useState<string | null>(null);
 
   const getEntryDetails = useCallback(() => {
     if (!id) return;
@@ -31,6 +33,10 @@ const PublicView: React.FC<MediaPageProps> = ({}) => {
         setTranscription(response.transcript);
         const bodyContent = response.extensions.find(ext => ext.identifier === "body")?.content?.text ?? undefined;
         setSummarization(bodyContent as string);
+        const objectiveContent = response.extensions.find(ext => ext.identifier === "objectives")?.content?.text ?? undefined;
+        setObjectiveContent(objectiveContent as string);
+        const recommendationsContent = response.extensions.find(ext => ext.identifier === "recommendations")?.content?.text ?? undefined;
+        setRecommendationsContent(recommendationsContent as string);
       })
       .catch((error) => {
         console.error(error);
@@ -61,17 +67,47 @@ const PublicView: React.FC<MediaPageProps> = ({}) => {
     </TabPanel>
   );
 
-  tabs.push(<Tab key="Summarization">Summarization</Tab>);
-  tabPanels.push(
-    <TabPanel key="Summarization" value={1}>
-      <MDEditor.Markdown
-        source={summarization || ""}
-        style={{
-          backgroundColor: "transparent",
-        }}
-      />
-    </TabPanel>
-  );
+  if (summarization) {
+    tabs.push(<Tab key="Summarization">Summarization</Tab>);
+    tabPanels.push(
+      <TabPanel key="Summarization" value={1}>
+        <MDEditor.Markdown
+          source={summarization}
+          style={{
+            backgroundColor: "transparent",
+          }}
+        />
+      </TabPanel>
+    );
+  }
+  
+  if (objectiveContent) {
+    tabs.push(<Tab key="Objectives">Objectives</Tab>);
+    tabPanels.push(
+      <TabPanel key="Objectives" value={2}>
+        <MDEditor.Markdown
+          source={objectiveContent}
+          style={{
+            backgroundColor: "transparent",
+          }}
+        />
+      </TabPanel>
+    );
+  }
+
+  if (recommendationsContent) {
+    tabs.push(<Tab key="Recommendations">Recommendations</Tab>);
+    tabPanels.push(
+      <TabPanel key="Recommendations" value={3}>
+        <MDEditor.Markdown
+          source={recommendationsContent}
+          style={{
+            backgroundColor: "transparent",
+          }}
+        />
+      </TabPanel>
+    );
+  }
 
 
  

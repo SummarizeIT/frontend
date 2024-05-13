@@ -63,44 +63,10 @@ export default function SignInPage() {
   const navigate = useNavigate();
   const isAuthenticated = useIsAuthenticated();
 
-  const saveCredentialsToLocalStorage = (
-    email: string,
-    password: string,
-    rememberMe: boolean
-  ) => {
-    localStorage.setItem("email", email);
-    localStorage.setItem("password", password);
-    localStorage.setItem("rememberMe", rememberMe.toString());
-    if (rememberMe) {
-      setTimeout(() => {
-        localStorage.removeItem("email");
-        localStorage.removeItem("password");
-        localStorage.removeItem("rememberMe");
-      }, 7 * 24 * 60 * 60 * 1000);// 7days
-    }
-  };
-  const getEmailAndPasswordFromLocalStorage = () => {
-    const storedEmail = localStorage.getItem("email");
-    const storedPassword = localStorage.getItem("password");
-    const storedRememberMe = localStorage.getItem("rememberMe");
-    return { storedEmail, storedPassword, storedRememberMe };
-  };
-
   const handleSubmit = async (event: React.FormEvent<SignInFormElement>) => {
     event.preventDefault();
     const { email, password, rememberMe } = event.currentTarget
       .elements as FormElements;
-    const userEmail = email.value;
-    const userPassword = password.value;
-    const rememberMeChecked = rememberMe.checked;
-    if (rememberMeChecked) {
-      saveCredentialsToLocalStorage(userEmail, userPassword, rememberMeChecked);
-    } else {
-      localStorage.removeItem("email");
-      localStorage.removeItem("password");
-      localStorage.removeItem("rememberMe");
-    }
-
     AuthService.login({
       requestBody: {
         email: email.value,
@@ -123,14 +89,6 @@ export default function SignInPage() {
   };
 
   useEffect(() => {
-    const { storedEmail, storedPassword, storedRememberMe } =
-      getEmailAndPasswordFromLocalStorage();
-    if (storedEmail && storedPassword && storedRememberMe === "true") {
-      document.querySelector('input[name="email"]')!.value = storedEmail;
-      document.querySelector('input[name="password"]')!.value = storedPassword;
-      document.querySelector('input[name="rememberMe"]')!.checked = storedRememberMe;      
-    }
-
     if (isAuthenticated) navigate("/dashboard");
   });
 
@@ -249,7 +207,7 @@ export default function SignInPage() {
                     size="sm"
                     label="Remember me"
                     name="rememberMe"
-                    defaultChecked={false}
+                    defaultChecked={true}
                   />
                 </FormControl>
                 <Stack gap={4} sx={{ mt: 2 }}>

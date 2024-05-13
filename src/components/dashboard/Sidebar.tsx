@@ -127,8 +127,10 @@ export default function Sidebar() {
         onClick={() => closeSidebar()}
       />
       <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <LogoIcon />
-        <Typography level="title-lg">Summerize IT</Typography>
+        <a href="/" className="ml-2 font-bold text-xl flex items-center">
+          <LogoIcon />
+        <Typography sx={{ml:"2px"}} level="title-lg">Summerize IT</Typography>
+        </a>
         <ColorSchemeToggle sx={{ ml: "auto" }} />
       </Box>
       {/* call for the search */}
@@ -177,14 +179,6 @@ export default function Sidebar() {
               <ManageAccountsRoundedIcon/>
               <ListItemContent>
                 <Typography level="title-sm">Profile</Typography>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
-          <ListItem onClick={() => navigate("/settings/notifications")}>
-            <ListItemButton>
-              <NotificationsNoneRoundedIcon/>
-              <ListItemContent>
-                <Typography level="title-sm">Notifications</Typography>
               </ListItemContent>
             </ListItemButton>
           </ListItem>

@@ -12,13 +12,12 @@ import Transcript from "./extensions/transcript";
 import Body from "./extensions/body";
 import Objectives from "./extensions/objectives";
 import Recommendations from "./extensions/recommendations";
-import { ExtensionContent } from "./utils/types";
 
 interface EntryContextType {
   entry: EntryResponse;
   editMode: boolean;
-  getExtension: (identifier: string) => ExtensionContent;
-  setExtension: ({ identifier, content }: Extension) => void;
+  getExtension: (identifier: string) => unknown;
+  setExtension: ({ identifier, content }: { identifier: string, content: unknown }) => void;
   clearExtension: (identifier: string) => void;
 }
 
@@ -53,10 +52,10 @@ const MediaPage: React.FC = () => {
   }
 
   const getExtension = (identifier: string) => {
-    return getExtensionMap().get(identifier) as ExtensionContent;
+    return getExtensionMap().get(identifier);
   }
 
-  const setExtension = ({ identifier, content }: Extension) => {
+  const setExtension = ({ identifier, content }: { identifier: string, content: unknown }) => {
     const extensions = getExtensionMap()
     extensions.set(identifier, content)
     setExtensionMap(extensions)

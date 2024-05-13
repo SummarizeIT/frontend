@@ -3,33 +3,36 @@ import { ExtensionComponent, OnChange } from "../utils/types";
 import { useEntryContext } from "../view";
 import { useCallback, useEffect, useState } from "react";
 
+interface BodyContent {
+    text: string;
+}
 
 const Body: ExtensionComponent = () => {
     const identifier = "body"
     const entryContext = useEntryContext();
-    const [text, setText] = useState<string>(() => entryContext.getExtension(identifier) ? entryContext.getExtension(identifier).text as string : "")
+    const [content, setContent] = useState<BodyContent>(() => entryContext.getExtension(identifier) as BodyContent ?? { text: "" })
 
     const onChange = useCallback<OnChange>((val) => {
-        setText(val ?? "");
-    }, [text]);
+        setContent({ text: val ?? "" });
+    }, [content]);
 
     useEffect(() => {
-        if (text === "")
+        if (content.text === "")
             entryContext.clearExtension(identifier);
         else
-            entryContext.setExtension({ identifier, content: { text } })
-    }, [text])
+            entryContext.setExtension({ identifier, content })
+    }, [content])
 
     return entryContext.editMode ? (
-        <MDEditor value={text} onChange={onChange}>
+        <MDEditor value={content.text} onChange={onChange}>
             <MDEditor.Markdown
-                source={text}
+                source={content.text}
                 style={{
                     backgroundColor: "transparent",
                 }}
             />
         </MDEditor>) : <MDEditor.Markdown
-        source={text}
+        source={content.text}
         style={{
             backgroundColor: "transparent",
         }}

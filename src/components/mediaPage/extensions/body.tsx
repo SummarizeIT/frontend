@@ -24,19 +24,21 @@ const Body: ExtensionComponent = () => {
     }, [content])
 
     return entryContext.editMode ? (
-        <MDEditor value={content.text} onChange={onChange}>
-            <MDEditor.Markdown
-                source={content.text}
-                style={{
-                    backgroundColor: "transparent",
-                }}
-            />
-        </MDEditor>) : <MDEditor.Markdown
-        source={content.text}
-        style={{
-            backgroundColor: "transparent",
-        }}
-    />
+            <MDEditor value={content.text} onChange={onChange}>
+                <MDEditor.Markdown
+                    source={content.text}
+                    style={{
+                        backgroundColor: "transparent",
+                    }}
+                />
+            </MDEditor>
+    ) :
+        <MDEditor.Markdown
+            source={content.text}
+            style={{
+                backgroundColor: "transparent",
+            }}
+        />
 }
 
 export default Body;

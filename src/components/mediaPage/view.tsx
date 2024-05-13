@@ -19,6 +19,7 @@ interface EntryContextType {
   getExtension: (identifier: string) => unknown;
   setExtension: ({ identifier, content }: { identifier: string, content: unknown }) => void;
   clearExtension: (identifier: string) => void;
+  refreshExtension: (identifier: string) => unknown;
 }
 
 const EntryContext = React.createContext<EntryContextType>(null!);
@@ -67,18 +68,29 @@ const MediaPage: React.FC = () => {
     setExtensionMap(extensions)
   }
 
+  const refreshEntry = async () => {
+    if (!id) {
+      navigate("/404");
+      return;
+    }
+    setEntry(await EntryService.getEntryById({ id }))
+  }
+
+  const refreshExtension = async (identifier: string) => {
+    if (!id) {
+      navigate("/404");
+      return;
+    }
+    const entry = await EntryService.getEntryById({ id })
+    return entry.extensions.filter(extension => extension.identifier === identifier)[0] ?? null
+  }
+
   useEffect(() => {
-    (async () => {
-      if (!id) {
-        navigate("/404");
-        return;
-      }
-      setEntry(await EntryService.getEntryById({ id }))
-    })()
+    refreshEntry();
   }, [])
 
   return entry && (
-    <EntryContext.Provider value={{ entry, editMode, getExtension, setExtension, clearExtension }}>
+    <EntryContext.Provider value={{ entry, editMode, getExtension, setExtension, clearExtension, refreshExtension }}>
       <CssVarsProvider disableTransitionOnChange>
         <CssBaseline />
         <Box sx={{ display: "flex" }}>

@@ -15,7 +15,7 @@ const Pane: PaneComponent = ({ children }) => {
     setTabNum(newValue);
   };
 
-  const theme = createTheme({})
+  const theme = createTheme({});
 
   return (
     <ThemeProvider theme={theme}>

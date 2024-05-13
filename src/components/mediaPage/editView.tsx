@@ -1,11 +1,12 @@
 import { EntryService } from "@/client";
 import { useUserContext } from "@/utils/user/user-context";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingModal from "../modal/LoadingModal";
 import MDEditor from "@uiw/react-md-editor";
-import { Box, Button, CssBaseline, CssVarsProvider, Tab, TabList, TabPanel, Tabs } from "@mui/joy";
+import { Box, Button, CssBaseline, CssVarsProvider, IconButton, Input, Tab, TabList, TabPanel, Tabs } from "@mui/joy";
 import { formatDate } from "./parts/top";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 
 const EditView = () => {
   const { id } = useParams();
@@ -20,7 +21,9 @@ const EditView = () => {
   const [transcription, setTranscription] = useState<string | undefined>(
     undefined
   );
+  const [isPublic, setIsPublic] = useState<boolean>(false);
   const userContext = useUserContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const setRoot = async () => {
@@ -52,6 +55,7 @@ const EditView = () => {
               (ext) => ext.identifier === "recommendations"
             )?.content?.text ?? undefined;
           setRecommendations(recommendationsContent as string);
+          setIsPublic(response.isPublic);
         })
         .catch((error) => {})
         .finally(() => {
@@ -68,113 +72,142 @@ const EditView = () => {
       setLoading(false);
       return;
     }
-    // await EntryService.updateEntry({
-    //   id: id,
-    //   requestBody:
-    //   title: title,
-    //   transcript: transcription,
-    //   extensions: [
-    //     { identifier: "body", content: { text: body } },
-    //     { identifier: "objective", content: { text: objectives } },
-    //     { identifier: "recommendations", content: { text: recommendations } },
-    //   ],
-    // })
-    //   .then(() => {
-    //     console.log("Updated");
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   })
-    //   .finally(() => {
-    //     setLoading(false);
-    //   });
+    if(title&&transcription&&body&&objectives&&recommendations){
+    await EntryService.updateEntry({
+      id: id,
+      requestBody: {
+        title: title,
+        isPublic: isPublic,
+        extensions: [
+          {
+            identifier: "body",
+            content: {
+              text: body,
+            },
+          },
+          {
+            identifier: "objective",
+            content: {
+              text: objectives,
+            },
+          },
+          {
+            identifier: "recommendations",
+            content: {
+              text: recommendations,
+            },
+          },
+        ],
+
+
+      },
+    })
+      .then(() => {
+        console.log("Updated");
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
+         navigate(-1);
+      });
   };
+};
 
   return (
     <CssVarsProvider disableTransitionOnChange>
-      <CssBaseline />
-      <Box sx={{ display: "flex"    ,  height:"100%" }}>
-        <Box
-          component="main"
-          className="MainContent"
-          sx={{
-            px: { xs: 2, md: 6 },
-            pt: {
-              xs: "calc(12px + var(--Header-height))",
-              sm: "calc(12px + var(--Header-height))",
-              md: 3,
-            },
-            pb: { xs: 2, sm: 2, md: 3 },
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            minWidth: 0,
-            gap: 1,
-            height:"100%",
-          }}
-        >
-          <div style={{ textAlign: "center" }}>
-        Title:
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        {formatDate(createdOn!)}
+  <CssBaseline />
+  <Box sx={{ display: "flex", height: "100%" }}>
+    <Box
+      component="main"
+      className="MainContent"
+      sx={{
+        px: { xs: 2, md: 6 },
+        pt: {
+          xs: "calc(12px + var(--Header-height))",
+          sm: "calc(12px + var(--Header-height))",
+          md: 3,
+        },
+        pb: { xs: 2, sm: 2, md: 3 },
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        minWidth: 0,
+        gap: 1,
+        height: "100%",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        <div style={{ display: "flex", gap: "8px" }}>
+          <IconButton
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            <ArrowBackRoundedIcon />
+          </IconButton>
+        </div>
+        <div style={{ flexGrow: 1, textAlign: "center" }}>
+          <input value={title} onChange={(e) => setTitle(e.target.value)} />
+          {formatDate(createdOn!)}
+        </div>
       </div>
-
-      <Tabs aria-label="Sticky tabs" defaultValue={0}>
-        <TabList sticky={"top"} variant="soft">
+      <Tabs aria-label="Sticky tabs" defaultValue={0} sx={{ height: "100%" }}>
+        <TabList sticky="top" variant="soft">
           <Tab>Transcription</Tab>
           <Tab>Body</Tab>
           <Tab>Objective</Tab>
           <Tab>Recommendations</Tab>
         </TabList>
 
-        <TabPanel value={0}>
+        <TabPanel value={0} sx={{ height: "100%" }}>
           <MDEditor
             value={transcription}
             onChange={setTranscription}
-            style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }}
+            style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent", height: "100%" }}
           />
         </TabPanel>
-        <TabPanel value={1}>
+        <TabPanel value={1} sx={{ height: "100%" }}>
           <MDEditor
             value={body}
             onChange={setBody}
-            style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }}
+            style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent", height: "100%" }}
           />
         </TabPanel>
-        <TabPanel value={2}>
+        <TabPanel value={2} sx={{ height: "100%" }}>
           <MDEditor
             value={objectives}
             onChange={setObjective}
-            style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }}
+            style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent", height: "100%" }}
           />
         </TabPanel>
-        <TabPanel value={3}>
+        <TabPanel value={3} sx={{ height: "100%" }}>
           <MDEditor
             value={recommendations}
             onChange={setRecommendations}
-            style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }}
+            style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent", height: "100%" }}
           />
         </TabPanel>
       </Tabs>
-      <div
-        style={{
-          height: "100%",
-        }}
-      >
+      <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}> 
         <Button variant="outlined" color="neutral" onClick={handleSaveButton}>
           Save
         </Button>
       </div>
-
       <LoadingModal open={loading} onClose={() => setLoading(false)} />
-        </Box>
-      </Box>
-    </CssVarsProvider>
-      
+    </Box>
+  </Box>
+</CssVarsProvider>
+
+
   );
 };
 

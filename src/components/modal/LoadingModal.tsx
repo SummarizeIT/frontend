@@ -1,4 +1,4 @@
-import { DialogContent, DialogTitle, Modal, ModalClose, ModalDialog,CircularProgress} from "@mui/joy";
+import { DialogContent, DialogTitle, Modal,ModalDialog,CircularProgress} from "@mui/joy";
 
 interface loadingModalProps {
   open: boolean;
@@ -9,7 +9,6 @@ const LoadingModal: React.FC<loadingModalProps> = ({ open, onClose }) => {
   return (
     <Modal open={open} onClose={onClose}>
       <ModalDialog>
-        <ModalClose />
         <DialogTitle>Loading</DialogTitle>
         <DialogContent>
         <CircularProgress size="lg" />

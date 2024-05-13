@@ -25,6 +25,7 @@ import { ChonkyIconFA } from "chonky-icon-fontawesome";
 import { useCallback, useEffect, useState } from "react";
 import { RenameFolder, customActions } from "./ChonkyCustomActions";
 import { useNavigate } from "react-router-dom";
+import LoadingModal from "../modal/LoadingModal";
 
 // @ts-expect-error
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
@@ -137,6 +138,7 @@ export const FolderViewer = () => {
   const { mode } = useColorScheme();
   const [darkMode, setDarkMode] = useState<boolean>(mode === "dark");
   const [open, setOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -178,13 +180,15 @@ export const FolderViewer = () => {
         uploadRequest: uploadRequest,
         formData: formData,
       };
-
+      setLoading(true);
       try {
         await EntryService.uploadEntry(data);
         setOpen(false);
         fetchFolderDetails(currentFolderID!);
       } catch (error) {
         console.error("Error uploading file:", error);
+      }finally{
+        setLoading(false);
       }
     },
     [currentFolderID]
@@ -365,6 +369,7 @@ export const FolderViewer = () => {
           </DialogContent>
         </ModalDialog>
       </Modal>
+      <LoadingModal open={loading} onClose={() => setLoading(false)} />
     </>
   );
 };

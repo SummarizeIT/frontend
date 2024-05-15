@@ -1,4 +1,4 @@
-import { EntryService } from "@/client";
+import { EntryResponse, EntryService } from "@/client";
 import Body from "@/components/mediaPage/parts/body";
 import Top from "@/components/mediaPage/parts/top.tsx";
 import { useUserContext } from "@/utils/user/user-context";
@@ -19,13 +19,12 @@ interface MediaPageProps {
 const MediaPage: React.FC<MediaPageProps> = ({}) => {
   const { id } = useParams<{ id: string }>();
   const [url, setUrl] = useState<string | null>(null);
-  const [entrytitle, setTitle] = useState<string | null>(null);
-  const [createdOn, setCreatedOn] = useState<string | null>(null);
   const [transcriptionvalue, settranscriptionvalue] = useState<string | undefined>(undefined);
   const [body, setBody] = useState<string | undefined>(undefined);
   const [objectives, setObjective] = useState<string | undefined>(undefined);
   const [recommendations, setRecommendations] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+  const [mediadata, setMediaData] = useState<EntryResponse | undefined>(undefined);
   
   const userContext = useUserContext();
   
@@ -41,13 +40,12 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
     if (!id) return;
     EntryService.getEntryById({ id: id })
       .then((response) => {
+        setMediaData(response);
         setUrl(response.url);
-        setTitle(response.title);
-        setCreatedOn(response.createdOn);
         settranscriptionvalue(response.transcript);
         const bodyContent = response.extensions.find(ext => ext.identifier === "body")?.content?.text ?? undefined;
         setBody(bodyContent as string);
-        const objectiveContent = response.extensions.find(ext => ext.identifier === "objective")?.content?.text ?? undefined;
+        const objectiveContent = response.extensions.find(ext => ext.identifier === "objectives")?.content?.text ?? undefined;
         setObjective(objectiveContent as string);
         const recommendationsContent = response.extensions.find(ext => ext.identifier === "recommendations")?.content?.text ?? undefined;
         setRecommendations(recommendationsContent as string);
@@ -92,7 +90,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
               display: { xs: "2", md: "2" },
             }}
           >
-            <Top title={entrytitle} createdOn={createdOn} id={id!} />
+            <Top response={mediadata} id={id} />
           </Box>
           {/* player */}
           <Box
@@ -119,6 +117,8 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
               <RightTab
                 recommendationsProps={recommendations}
                 objectiveProps={objectives}
+                id={id} 
+                loading={loading}
               />
             </Box>
           </Box>

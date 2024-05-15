@@ -38,8 +38,7 @@ const body: React.FC<bodyProps> = ({ body, transcription, id, loading }) => {
       requestBody: { identifier: "body", command: "generate" },
     })
       .then(() => {
-        window.location.reload();
-      })
+        console.log("Summarization generated");})
       .catch((error) => {
         console.error(error);
         setIsGenerating(false);

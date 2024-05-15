@@ -1,32 +1,31 @@
 
-import React, { useState,useEffect } from "react";
+import { EntryResponse, EntryService } from "@/client";
+import InfoModal from "@/components/modal/InfoModal";
+import { useUserContext } from "@/utils/user/user-context";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import ShareRoundedIcon from '@mui/icons-material/ShareRounded';
 import Dropdown from "@mui/joy/Dropdown";
 import IconButton from "@mui/joy/IconButton";
 import Menu from "@mui/joy/Menu";
 import MenuButton from "@mui/joy/MenuButton";
 import MenuItem from "@mui/joy/MenuItem";
 import Tabs from "@mui/joy/Tabs";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
-import ShareRoundedIcon from '@mui/icons-material/ShareRounded';
-import { useUserContext } from "@/utils/user/user-context";
-import { EntryService } from "@/client";
-import InfoModal from "@/components/modal/InfoModal";
 
 
 interface TopProps {
-  title: string | null;
-  createdOn: string | null;
-  id: string;
+  response?:EntryResponse;
+  id:string | undefined;
 }
 
 export const formatDate = (dateString: string | null): string | null => {
   if (!dateString) return null;
   const date = new Date(dateString);
   // Format the date and time as "DD-MM-YY at HH:MM"
-  return `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1)
+  return "Created on " + `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1)
     .toString()
     .padStart(2, "0")}-${date
     .getFullYear()
@@ -38,7 +37,7 @@ export const formatDate = (dateString: string | null): string | null => {
 };
 
 
-const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
+const Top: React.FC<TopProps> = ({response, id}) => {
   const navigate = useNavigate();
   const userContext = useUserContext();
   const [titleMessage, setTitleMessage] = useState<string|null>(null);
@@ -68,7 +67,9 @@ const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
     const currentUrl = new URL(window.location.href);
     const baseUrlWithPublicView = `${currentUrl.protocol}//${currentUrl.host}/publicview/${id}`;
     navigator.clipboard.writeText(baseUrlWithPublicView);
-    EntryService.updateEntry
+    if (response) {
+      EntryService.updateEntry({ id: id, requestBody:{isPublic:true,extensions:response.extensions, title:response.title}})
+    }
   };
   
   return (
@@ -91,7 +92,7 @@ const Top: React.FC<TopProps> = ({ title, createdOn ,id}) => {
           </IconButton>
         </div>
         <div style={{ flexGrow: 1, textAlign: "center" }}>
-          {title} {formatDate(createdOn)}
+          {response?.title} {formatDate(response?.createdOn || null)}
         </div>
         <div>
           <IconButton onClick={handleEdit}>

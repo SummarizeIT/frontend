@@ -47,7 +47,7 @@ const EditView = () => {
               ?.content?.text ?? undefined;
           setBody(bodyContent as string);
           const objectiveContent =
-            response.extensions.find((ext) => ext.identifier === "objective")
+            response.extensions.find((ext) => ext.identifier === "objectives")
               ?.content?.text ?? undefined;
           setObjective(objectiveContent as string);
           const recommendationsContent =
@@ -67,7 +67,7 @@ const EditView = () => {
   }, [id]);
 
   const handleSaveButton = async () => {
-    setLoading(true);
+    // setLoading(true);
     if (!id) {
       setLoading(false);
       return;
@@ -82,37 +82,42 @@ const EditView = () => {
           {
             identifier: "body",
             content: {
-              text: body,
-            },
+              text: body
+            }
           },
           {
-            identifier: "objective",
+            identifier: "objectives",
             content: {
-              text: objectives,
-            },
+              text: objectives
+            }
           },
           {
             identifier: "recommendations",
             content: {
-              text: recommendations,
-            },
+              text: recommendations
+            }
           },
         ],
 
 
       },
     })
-      .then(() => {
+      .then((response) => {
         console.log("Updated");
+        console.log(response);
       })
       .catch((error) => {
         console.error(error);
       })
       .finally(() => {
         setLoading(false);
-         navigate(-1);
+        // navigate(-1);
       });
-  };
+  }
+  else {
+    setLoading(false);
+    console.log("All fields are not filled");
+  }
 };
 
   return (

@@ -14,6 +14,15 @@ export const RenameFolder = defineFileAction({
   },
 });
 
+export const RecordAudio = defineFileAction({
+  id: "record-audio",
+  button: {
+    name: "Record Audio",
+    toolbar: true,
+    icon: ChonkyIconName.music,
+    contextMenu:false,
+  },
+});
 
 export const customActions = [
   ChonkyActions.CreateFolder,
@@ -23,4 +32,5 @@ export const customActions = [
   ChonkyActions.UploadFiles,
   ChonkyActions.MoveFiles,
   RenameFolder,
+  RecordAudio
 ];

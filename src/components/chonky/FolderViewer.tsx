@@ -22,11 +22,12 @@ import {
   setChonkyDefaults,
 } from "chonky";
 import { ChonkyIconFA } from "chonky-icon-fontawesome";
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { RecordAudio, RenameFolder, customActions } from "./ChonkyCustomActions";
 import { useNavigate } from "react-router-dom";
 import LoadingModal from "../modal/LoadingModal";
 import { AudioRecorder,useAudioRecorder  } from "react-audio-voice-recorder";
+import InfoModal from "../modal/InfoModal";
 
 // @ts-expect-error
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
@@ -138,6 +139,9 @@ export const FolderViewer = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [recording, setRecording] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [infoMessage, setInfoMessage] = React.useState<string|null>(null);
+  const [infoTitle, setInfoTitle] = React.useState<string|null>(null);
+  const [openInfo, setOpenInfo] = React.useState<boolean>(false);
   const recorderControls = useAudioRecorder();
   // const [flagRecording, setFlagRecoding] = useState<boolean>(false);
   const flagRecordingRef = useRef<boolean>(false);
@@ -162,6 +166,7 @@ export const FolderViewer = () => {
   }, []);
 
   const recordAudio = useCallback(async () => {
+    console.log("Recording audio Opened")
     setRecording(true);
   }, []);
 
@@ -329,7 +334,12 @@ export const FolderViewer = () => {
       flagRecordingRef.current = false;
       const audio = new Blob([blob], { type: "audio/mpeg" });
       const title=window.prompt("Enter the title of the recording");
-      if (!title) return;
+      if (!title){
+        setOpenInfo(true);
+        setInfoMessage("Title not provided. Recording not uploaded.");
+        setInfoTitle("Error");
+        return;
+      } 
       const formData = {
         mediaFile: audio,
       };
@@ -347,11 +357,14 @@ export const FolderViewer = () => {
       try {
         await EntryService.uploadEntry(data);
         setRecording(false);
+        flagRecordingRef.current = false;
         fetchFolderDetails(currentFolderID!);
       } catch (error) {
         console.error("Error uploading file:", error);
       } finally {
         setLoading(false);
+        flagRecordingRef.current = false;
+        window.location.reload();
       }
     },
     [currentFolderID]
@@ -381,12 +394,13 @@ export const FolderViewer = () => {
   const addAudioElement = (blob: Blob) => {
     flagRecordingRef.current = true;
     uploadRecording(blob);
+    // setRecording(false);
   };
 
   const handleStopRecording = () => {
-    // console.log("Stop recording");
     setRecording(false);
     recorderControls.stopRecording();
+    window.location.reload();
     flagRecordingRef.current = false;
   };
   
@@ -442,6 +456,8 @@ export const FolderViewer = () => {
         </ModalDialog>
       </Modal>
       <LoadingModal open={loading} onClose={() => setLoading(false)} />
+      <InfoModal open={openInfo} infoMessage={infoMessage!} infoTitle={infoTitle!} onClose={()=>setOpenInfo(false)}/>
+
     </>
   );
 };

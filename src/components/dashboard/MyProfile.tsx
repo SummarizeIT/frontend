@@ -16,7 +16,7 @@ import {
   Stack,
   Typography,
 } from "@mui/joy";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import InfoModal from "../modal/InfoModal";
 
 export default function MyProfile() {

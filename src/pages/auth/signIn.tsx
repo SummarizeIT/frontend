@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthService, OpenAPI } from "@/client";
 import { useEffect } from "react";
 import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
+import InfoModal from "@/components/modal/InfoModal";
 
 interface FormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement;
@@ -62,6 +63,9 @@ export default function SignInPage() {
   const signIn = useSignIn();
   const navigate = useNavigate();
   const isAuthenticated = useIsAuthenticated();
+  const [infoMessage, setInfoMessage] = React.useState<string|null>(null);
+  const [infoTitle, setInfoTitle] = React.useState<string|null>(null);
+  const [open, setOpen] = React.useState<boolean>(false);
 
   const handleSubmit = async (event: React.FormEvent<SignInFormElement>) => {
     event.preventDefault();
@@ -85,7 +89,11 @@ export default function SignInPage() {
         OpenAPI.TOKEN = response.token;
         navigate("/dashboard");
       })
-      .catch((err) => alert(err));
+      .catch((err) => {
+        setOpen(true);
+        setInfoMessage(err.message);
+        setInfoTitle("Error");
+      });
   };
 
   useEffect(() => {
@@ -94,6 +102,7 @@ export default function SignInPage() {
 
   return (
     <CssVarsProvider defaultMode="dark" disableTransitionOnChange>
+          <InfoModal open={open} infoMessage={infoMessage!} infoTitle={infoTitle!} onClose={()=>setOpen(false)}/>
       <CssBaseline />
       <GlobalStyles
         styles={{

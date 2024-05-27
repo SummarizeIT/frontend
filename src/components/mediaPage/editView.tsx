@@ -1,6 +1,6 @@
 import { EntryService } from "@/client";
 import { useUserContext } from "@/utils/user/user-context";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import LoadingModal from "../modal/LoadingModal";
 import MDEditor from "@uiw/react-md-editor";
@@ -19,6 +19,7 @@ import {
 import { formatDate } from "./parts/top";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { Label } from "@radix-ui/react-dropdown-menu";
+import InfoModal from "../modal/InfoModal";
 
 const EditView = () => {
   const { id } = useParams();
@@ -31,6 +32,9 @@ const EditView = () => {
   const [title, setTitle] = useState<string | undefined>(undefined);
   const [createdOn, setCreatedOn] = useState<string | undefined>(undefined);
   const [isPublic, setIsPublic] = useState<boolean>(false);
+  const [infoMessage, setInfoMessage] = React.useState<string|null>(null);
+  const [infoTitle, setInfoTitle] = React.useState<string|null>(null);
+  const [open, setOpen] = React.useState<boolean>(false);
   const userContext = useUserContext();
   const navigate = useNavigate();
 
@@ -47,7 +51,6 @@ const EditView = () => {
 
       EntryService.getEntryById({ id: id })
         .then((response) => {
-          console.log(response);
           setTitle(response.title);
           setCreatedOn(response.createdOn);
           const bodyContent =
@@ -80,7 +83,14 @@ const EditView = () => {
       setLoading(false);
       return;
     }
-    if (title && body && objectives && recommendations) {
+    if(!title || title.trim() === "") {
+      setOpen(true);
+      setInfoTitle("Error");
+      setInfoMessage("Title cannot be empty.");
+      setLoading(false);
+      return;
+    }
+    
       await EntryService.updateEntry({
         id: id,
         requestBody: {
@@ -109,16 +119,21 @@ const EditView = () => {
         },
       })
         .then(() => {
-          console.log("Updated");
+          setOpen(true);
+          setInfoTitle("Success");
+          setInfoMessage("Entry updated successfully.");
         })
         .catch((error) => {
           console.error(error);
+          setOpen(true);
+          setInfoTitle("Error");
+          setInfoMessage("Failed to update entry. Please try again.");
         })
         .finally(() => {
           setLoading(false);
           navigate(-1);
         });
-    }
+    
   };
 
   return (
@@ -243,6 +258,7 @@ const EditView = () => {
             </Button>
           </div>
           <LoadingModal open={loading} onClose={() => setLoading(false)} />
+          <InfoModal open={open} infoMessage={infoMessage!} infoTitle={infoTitle!} onClose={()=>setOpen(false)}/>
         </Box>
       </Box>
     </CssVarsProvider>

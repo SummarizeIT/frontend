@@ -45,7 +45,6 @@ const Top: React.FC<TopProps> = ({response, id}) => {
   const [open, setOpen] = useState<boolean>(false);
 
   const handleEdit = () => {
-    console.log("Edit clicked");
     if (!id){
       setTitleMessage("Error");
       setInfoMessage("No ID found");

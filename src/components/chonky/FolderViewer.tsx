@@ -50,21 +50,15 @@ export const useFileActionHandler = (
       if (data.id === ChonkyActions.OpenFiles.id) {
         const { targetFile, files } = data.payload;
         const fileToOpen = targetFile ?? files[0];
-        console.log("File to open:", fileToOpen);
         if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
-          console.log("Opening folder");
           openFolder(fileToOpen.id);
           return;
         } else {
-          console.log("Opening file");
           openFile(fileToOpen.id);
         }
       } else if (data.id === ChonkyActions.OpenParentFolder.id) {
-        console.log("Opening parent folder");
         if (!fileChain) return;
-        console.log("File chain:", fileChain);
         const parentFolder = fileChain[fileChain.length - 2];
-        console.log("Parent folder:", parentFolder);
         if (parentFolder) openFolder(parentFolder.id);
       } else if (data.id === ChonkyActions.CreateFolder.id) {
         const folderName = window.prompt(
@@ -110,9 +104,7 @@ export const useFileActionHandler = (
           });
         }
       } else if (data.id === ChonkyActions.UploadFiles.id) {
-        console.log("Uploading files");
         uploadFile();
-        console.log(data);
       }
       else if (data.id === RecordAudio.id) {
         recordAudio();
@@ -214,7 +206,6 @@ export const FolderViewer = () => {
       .then((response) => {
         setFilesList(response.list);
         setFileChain(response.pathFromRoot);
-        console.log("sadasdsad", fileChain);
       })
       .catch((error) => console.error("Error fetching folder details:", error));
   }, []);
@@ -278,7 +269,6 @@ export const FolderViewer = () => {
   const renameFile = useCallback(
     async (fileId: string, name: string) => {
       EntryService.getEntryById({ id: fileId }).then((response) => {
-        console.log("Response", response);
         const title: string = name;
         const extensions: Array<Extension> = response.extensions;
         const isPublic: boolean = response.isPublic;
@@ -335,7 +325,6 @@ export const FolderViewer = () => {
 
   const uploadRecording = useCallback(
     async (blob: Blob) => {
-      console.log("flagRecording in upload ", flagRecordingRef.current);
       if (flagRecordingRef.current === false) return;
       flagRecordingRef.current = false;
       const audio = new Blob([blob], { type: "audio/mpeg" });
@@ -390,9 +379,7 @@ export const FolderViewer = () => {
   }, [rootFolderID, fetchFolderDetails]);
   
   const addAudioElement = (blob: Blob) => {
-    console.log("Audio blob");
     flagRecordingRef.current = true;
-    console.log("==", flagRecordingRef.current);
     uploadRecording(blob);
   };
 

@@ -19,6 +19,7 @@ import { LogoIcon } from "../../components/Icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthService } from "@/client";
 import NotFoundPage from "@/pages/Page404";
+import InfoModal from "@/components/modal/InfoModal";
 
 function ColorSchemeToggle(props: IconButtonProps) {
     const { onClick, ...other } = props;
@@ -50,6 +51,9 @@ export default function ForgotPassword() {
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const [validToken, setValidToken] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [infoMessage, setInfoMessage] = React.useState<string|null>(null);
+    const [infoTitle, setInfoTitle] = React.useState<string|null>(null);
+    const [open, setOpen] = React.useState<boolean>(false);
 
 
     useEffect(() => {
@@ -73,7 +77,9 @@ export default function ForgotPassword() {
     const handlePasswordReset = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (password !== passwordConfirm) {
-            alert("Passwords do not match!");
+            setOpen(true);
+            setInfoTitle("Error");
+            setInfoMessage("Passwords do not match!");
             return;
         }
         if (token) {
@@ -84,11 +90,15 @@ export default function ForgotPassword() {
                     passwordConfirm: passwordConfirm
                 }
             }).then(response => {
-                alert(response);
+                setOpen(true);
+                setInfoTitle("Success");
+                setInfoMessage("Password reset successfully.");
                 navigate('/signin'); 
             }).catch(error => {
-                console.error("Failed to reset password", error);
-                alert("Failed to reset password. Please try again.");
+                setOpen(true);
+                setInfoTitle("Error");
+                setInfoMessage("Failed to reset password. Please try again.");
+                console.log(error);
             });
         }
     };
@@ -217,6 +227,7 @@ export default function ForgotPassword() {
                     </Box>
                 </Box>
             </Box>
+            <InfoModal open={open} infoMessage={infoMessage!} infoTitle={infoTitle!} onClose={()=>setOpen(false)}/>
         </CssVarsProvider>
     );
 }

@@ -24,6 +24,7 @@ import { LogoIcon } from "../../components/Icons";
 import { AuthService } from "@/client";
 import { IconButtonProps } from "@mui/joy/IconButton";
 import { useNavigate } from "react-router-dom";
+import InfoModal from "@/components/modal/InfoModal";
 
 interface FormElements extends HTMLFormControlsCollection {
     email: HTMLInputElement;
@@ -63,12 +64,18 @@ function ColorSchemeToggle(props: IconButtonProps) {
 
 export default function SendEmail() {
     const navigate = useNavigate();
+    const [infoMessage, setInfoMessage] = React.useState<string|null>(null);
+    const [infoTitle, setInfoTitle] = React.useState<string|null>(null);
+    const [open, setOpen] = React.useState<boolean>(false);
 
     const handleSubmit = async (event: React.FormEvent<SendEmailFormElement>) => {
         event.preventDefault();
         const { email } = event.currentTarget.elements;
         if (email.value === "") {
-            alert("Please enter a valid email address");
+            setOpen(true);
+            setInfoMessage("Please enter a valid email address");
+            setInfoTitle("Email Invalid");
+
         } else {
             try {
                 const response = await AuthService.resetPassword({
@@ -76,17 +83,22 @@ export default function SendEmail() {
                         email: email.value,
                     }
                 });
-                alert(response.message);
+                setOpen(true);
+                setInfoMessage(response.message);
+                setInfoTitle("Success");
                 navigate("/signin");
 
             } catch (error) {
-                alert(error);
+                setOpen(true);
+                setInfoMessage(error.message);
+                setInfoTitle("Error");
             }
         }
     };
 
     return (
         <CssVarsProvider defaultMode="dark" disableTransitionOnChange>
+            <InfoModal open={open} infoMessage={infoMessage!} infoTitle={infoTitle!} onClose={()=>setOpen(false)}/>
             <CssBaseline />
             <GlobalStyles
                 styles={{

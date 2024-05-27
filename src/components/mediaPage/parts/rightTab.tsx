@@ -6,6 +6,7 @@ import Tabs from "@mui/joy/Tabs";
 import React, { useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { EntryService } from "@/client";
+import InfoModal from "@/components/modal/InfoModal";
 
 interface RightTabProps {
   objectiveProps?: string;
@@ -23,10 +24,15 @@ const RightTab: React.FC<RightTabProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const tabs = [];
   const tabPanels = [];
+  const [infoMessage, setInfoMessage] = React.useState<string|null>(null);
+  const [infoTitle, setInfoTitle] = React.useState<string|null>(null);
+  const [open, setOpen] = React.useState<boolean>(false);
 
   const handleGenerateObjective = () => {
     if (loading) {
-      alert("You can't generate objectives until transcription ends.");
+      setOpen(true);
+      setInfoMessage("Please wait for the transcription to finish before generating the objectives");
+      setInfoTitle("Transcription not finished");
       return;
     }
     if (!id) return;
@@ -45,7 +51,9 @@ const RightTab: React.FC<RightTabProps> = ({
   };
   const handleGenerateRecommendations = () => {
     if (loading) {
-      alert("You can't generate recommendations until transcription ends.");
+      setOpen(true);
+      setInfoMessage("Please wait for the transcription to finish before generating the recommendations");
+      setInfoTitle("Transcription not finished");
       return;
     }
     if (!id) return;
@@ -145,6 +153,8 @@ const RightTab: React.FC<RightTabProps> = ({
 
 
   return (
+   <>
+    <InfoModal open={open} infoMessage={infoMessage!} infoTitle={infoTitle!} onClose={()=>setOpen(false)}/>
     <Tabs aria-label="Basic tabs" defaultValue={0} sx={{ height: "100%" }}>
       <TabList
         sx={{
@@ -155,6 +165,7 @@ const RightTab: React.FC<RightTabProps> = ({
       </TabList>
       {tabPanels}
     </Tabs>
+   </>
   );
 };
 

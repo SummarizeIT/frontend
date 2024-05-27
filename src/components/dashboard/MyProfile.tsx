@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/joy";
 import { useEffect, useState } from "react";
+import InfoModal from "../modal/InfoModal";
 
 export default function MyProfile() {
   const userContext = useUserContext();
@@ -24,6 +25,10 @@ export default function MyProfile() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [infoMessage, setInfoMessage] = React.useState<string|null>(null);
+  const [infoTitle, setInfoTitle] = React.useState<string|null>(null);
+  const [open, setOpen] = React.useState<boolean>(false);
+  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -79,7 +84,9 @@ export default function MyProfile() {
       });
     } catch (error) {
       console.error("Failed to update profile:", error);
-      alert("Failed to update profile.");
+      setOpen(true);
+      setInfoMessage("Failed to update profile");
+      setInfoTitle("Error");
     }
 
     window.location.reload();
@@ -96,6 +103,7 @@ export default function MyProfile() {
 
   return (
     <Box sx={{ flex: 1, width: "100%" }}>
+      <InfoModal open={open} infoMessage={infoMessage!} infoTitle={infoTitle!} onClose={()=>setOpen(false)}/>
       <Stack
         spacing={4}
         sx={{

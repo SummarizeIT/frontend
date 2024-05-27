@@ -1,4 +1,5 @@
 import { EntryService } from "@/client";
+import InfoModal from "@/components/modal/InfoModal";
 import { useUserContext } from "@/utils/user/user-context";
 import { Button, LinearProgress } from "@mui/joy";
 import Tab from "@mui/joy/Tab";
@@ -18,6 +19,9 @@ interface bodyProps {
 const body: React.FC<bodyProps> = ({ body, transcription, id, loading }) => {
   const userContext = useUserContext();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [infoMessage, setInfoMessage] = React.useState<string|null>(null);
+  const [infoTitle, setInfoTitle] = React.useState<string|null>(null);
+  const [open, setOpen] = React.useState<boolean>(false);
 
   useEffect(() => {
     const setRoot = async () => {
@@ -28,7 +32,9 @@ const body: React.FC<bodyProps> = ({ body, transcription, id, loading }) => {
 
   const handleGenerateSummarization = () => {
     if (loading) {
-      alert("You can't generate summary until transcription ends.");
+      setInfoMessage("Please wait for the transcription to finish before generating the summarization");
+      setInfoTitle("Transcription not finished");
+      setOpen(true);
       return;
     }
     if (!id) return;
@@ -38,7 +44,11 @@ const body: React.FC<bodyProps> = ({ body, transcription, id, loading }) => {
       requestBody: { identifier: "body", command: "generate" },
     })
       .then(() => {
-        console.log("Summarization generated");})
+        setOpen(true);
+        setInfoMessage("Summarization generated successfully");
+        setInfoTitle("Success");
+        setIsGenerating(false);
+      })
       .catch((error) => {
         console.error(error);
         setIsGenerating(false);
@@ -120,6 +130,8 @@ const body: React.FC<bodyProps> = ({ body, transcription, id, loading }) => {
   }
 
   return (
+    <>
+    <InfoModal open={open} infoMessage={infoMessage!} infoTitle={infoTitle!} onClose={()=>setOpen(false)}/>
     <Tabs
       aria-label="Sticky tabs"
       defaultValue={0}
@@ -135,6 +147,7 @@ const body: React.FC<bodyProps> = ({ body, transcription, id, loading }) => {
       </TabList>
       {tabPanels}
     </Tabs>
+    </>
   );
 };
 

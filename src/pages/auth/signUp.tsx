@@ -91,7 +91,13 @@ export default function SignUpPage() {
 
     AuthService.register({requestBody: registerData}).then(() => {
       navigate("/signin")
-    }).catch(err => console.log(err))
+    }).catch(err => {
+      console.log(err)
+      setInfoMessage("Error: " + err.message);
+      setInfoTitle("Error");
+      setInfoModalOpen(true);
+    
+    })
   };
 
   return (

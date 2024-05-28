@@ -127,6 +127,7 @@ const MediaPage: React.FC<MediaPageProps> = ({}) => {
             sx={{
               gridRow: "span 3",
               display: { xs: "2", md: "2" },
+              height: "100%",
             }}
             height={"40%"}
           >

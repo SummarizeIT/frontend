@@ -137,7 +137,7 @@ const body: React.FC<bodyProps> = ({ body, transcription, id, loading }) => {
       defaultValue={0}
       sx={{
         p: 1,
-        height: 270,
+        height: "100%",
         overflowY: "auto",
         width: "100%",
       }}

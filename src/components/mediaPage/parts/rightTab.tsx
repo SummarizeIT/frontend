@@ -72,9 +72,9 @@ const RightTab: React.FC<RightTabProps> = ({
   };
 
   if (objectiveProps) {
-    tabs.push(<Tab key="objectives">objectives</Tab>);
+    tabs.push(<Tab key="objectives">Objectives</Tab>);
     tabPanels.push(
-      <TabPanel key="Objectives" value={0}>
+      <TabPanel key="objectives" value={0}>
         <MDEditor.Markdown
           source={objectiveProps}
           style={{
@@ -84,9 +84,9 @@ const RightTab: React.FC<RightTabProps> = ({
       </TabPanel>
     );
   } else {
-    tabs.push(<Tab key="Objectives">Objectives</Tab>);
+    tabs.push(<Tab key="objectives">Objectives</Tab>);
     tabPanels.push(
-      <TabPanel key="Objectives" value={0}>
+      <TabPanel key="objectives" value={0}>
         <div
           style={{
             display: "flex",
@@ -112,9 +112,9 @@ const RightTab: React.FC<RightTabProps> = ({
   }
 
   if (recommendationsProps) {
-    tabs.push(<Tab key="recommendations">recommendations</Tab>);
+    tabs.push(<Tab key="recommendations">Recommendations</Tab>);
     tabPanels.push(
-      <TabPanel key="Recommendations" value={1}>
+      <TabPanel key="recommendations" value={1}>
         <MDEditor.Markdown
           source={recommendationsProps}
           style={{
@@ -124,9 +124,9 @@ const RightTab: React.FC<RightTabProps> = ({
       </TabPanel>
     );
   } else {
-    tabs.push(<Tab key="Recommendations">Recommendations</Tab>);
+    tabs.push(<Tab key="recommendations">Recommendations</Tab>);
     tabPanels.push(
-      <TabPanel key="Recommendations" value={1}>
+      <TabPanel key="recommendations" value={1}>
         <div
           style={{
             display: "flex",

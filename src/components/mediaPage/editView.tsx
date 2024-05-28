@@ -156,7 +156,7 @@ const EditView = () => {
             flexDirection: "column",
             minWidth: 0,
             gap: 1,
-            height: "100%",
+            // height: "100%",
           }}
         >
           <Label style={{ justifyContent: "center", display: "flex" }}>
@@ -217,6 +217,9 @@ const EditView = () => {
                   backgroundColor: "transparent",
                   height: "100%",
                 }}
+                height={"100%"}
+                draggable={false}
+                enableScroll={false}
               />
             </TabPanel>
             <TabPanel value={1} sx={{ height: "100%" }}>
@@ -228,6 +231,10 @@ const EditView = () => {
                   backgroundColor: "transparent",
                   height: "100%",
                 }}
+                height={"100%"}
+                draggable={false}
+                enableScroll={false}
+                
               />
             </TabPanel>
             <TabPanel value={2} sx={{ height: "100%" }}>
@@ -239,6 +246,9 @@ const EditView = () => {
                   backgroundColor: "transparent",
                   height: "100%",
                 }}
+                height={"100%"}
+                draggable={false}
+                enableScroll={false}
               />
             </TabPanel>
           </Tabs>
